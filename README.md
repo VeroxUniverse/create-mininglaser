@@ -9,7 +9,7 @@ This README shows:
 - where to put the **model & textures** for the laser head,
 - and what each field means.
 
-> Examples below use the mod id `create_mininglaser`. Adjust namespaces as needed.
+> Examples below use `<namespace>`. Adjust namespaces as needed.
 
 ---
 
