@@ -20,8 +20,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.veroxuniverse.create_mininglaser.content.items.DrillCoreItem;
-import net.veroxuniverse.create_mininglaser.content.items.DrillTier;
+import net.veroxuniverse.create_mininglaser.content.items.TierDef;
+import net.veroxuniverse.create_mininglaser.content.items.TierDefs;
 import net.veroxuniverse.create_mininglaser.content.laser.recipe.DrillCoreRecipe;
 import net.veroxuniverse.create_mininglaser.content.laser.recipe.DrillCoreRecipeHelper;
 import net.veroxuniverse.create_mininglaser.registry.ModAdvancements;
@@ -35,15 +35,14 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
 
-    public static final float MIN_SPEED_RPM  = 128f;
-    private static final float BASE_SPEED_RPM = 128f;
-    private static final float MAX_SPEED_RPM  = 256f;
+    public static final float DEFAULT_MIN_RPM  = 128f;
+    private static final float DEFAULT_MAX_RPM = 256f;
 
-    private DrillTier activeTier;
+    private TierDef activeTier;
     private double progress;
     private int processTime;
 
-    public DrillTier getActiveTier() { return activeTier; }
+    public TierDef getActiveTier() { return activeTier; }
 
     public LaserDrillControllerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.LASER_DRILL_ENTITY.get(), pos, state);
@@ -53,7 +52,9 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
     }
 
     private final net.minecraftforge.items.ItemStackHandler inv = new net.minecraftforge.items.ItemStackHandler(1) {
-        @Override public boolean isItemValid(int slot, ItemStack stack) { return stack.getItem() instanceof DrillCoreItem; }
+        @Override public boolean isItemValid(int slot, ItemStack stack) {
+            return TierDefs.byCoreItem(stack.getItem()) != null;
+        }
         @Override protected int getStackLimit(int slot, ItemStack stack) { return 1; }
         @Override protected void onContentsChanged(int slot) { setChanged(); sendData(); }
     };
@@ -74,7 +75,7 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
         tag.put("Core", inv.serializeNBT());
         tag.putInt("processTime", processTime);
         tag.putDouble("progress", progress);
-        tag.putInt("activeTier", activeTier != null ? activeTier.level : 0);
+        if (activeTier != null) tag.putString("activeTierId", activeTier.id.toString());
         super.write(tag, clientPacket);
     }
     @Override
@@ -82,8 +83,16 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
         if (tag.contains("Core")) inv.deserializeNBT(tag.getCompound("Core"));
         processTime = tag.getInt("processTime");
         progress = tag.contains("progress") ? tag.getDouble("progress") : tag.getInt("progress");
-        int tierLevel = tag.getInt("activeTier");
-        activeTier = tierLevel > 0 ? DrillTier.fromLevel(tierLevel) : null;
+        activeTier = null;
+        if (tag.contains("activeTierId")) {
+            var id = new net.minecraft.resources.ResourceLocation(tag.getString("activeTierId"));
+            activeTier = TierDefs.get(id);
+        } else if (tag.contains("activeTier")) {
+            // Legacy-Fallback: create_mininglaser:t{level}
+            int legacyLevel = tag.getInt("activeTier");
+            var id = new net.minecraft.resources.ResourceLocation("create_mininglaser", "t" + legacyLevel);
+            activeTier = TierDefs.get(id);
+        }
         super.read(tag, clientPacket);
     }
 
@@ -124,7 +133,8 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
         }
 
         ItemStack core = inv.getStackInSlot(0);
-        if (!(core.getItem() instanceof DrillCoreItem dci)) {
+        TierDef foundTier = core.isEmpty() ? null : TierDefs.byCoreItem(core.getItem());
+        if (foundTier == null) {
             if (activeTier != null) {
                 activeTier = null;
                 processTime = 0;
@@ -134,8 +144,8 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
             return;
         }
 
-        if (activeTier == null || activeTier != dci.getTier()) {
-            activeTier = dci.getTier();
+        if (activeTier == null || !activeTier.id.equals(foundTier.id)) {
+            activeTier = foundTier;
             processTime = 0;
             progress = 0.0;
             recalcStress();
@@ -145,14 +155,17 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
         if (rec == null) { progress = 0.0; return; }
         if (processTime == 0) processTime = rec.getDurationTicks();
 
+        float minRpm = activeTier != null && activeTier.minRpm > 0 ? activeTier.minRpm : DEFAULT_MIN_RPM;
+        float maxRpm = activeTier != null && activeTier.maxRpm > 0 ? activeTier.maxRpm : DEFAULT_MAX_RPM;
+
         float absSpeed = Math.abs(getSpeed());
-        if (absSpeed < MIN_SPEED_RPM) {
+        if (absSpeed < minRpm) {
             if (progress != 0.0) progress = 0.0;
             return;
         }
 
-        float rawMult = absSpeed / BASE_SPEED_RPM;
-        float speedMult = Mth.clamp(rawMult, 1.0f, MAX_SPEED_RPM / BASE_SPEED_RPM);
+        float rawMult = absSpeed / minRpm;
+        float speedMult = Mth.clamp(rawMult, 1.0f, maxRpm / minRpm);
 
         doLaserBeamEffects(true);
 
@@ -169,9 +182,10 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
     @Override
     public void onSpeedChanged(float prevSpeed) {
         super.onSpeedChanged(prevSpeed);
+        float minRpm = activeTier != null && activeTier.minRpm > 0 ? activeTier.minRpm : DEFAULT_MIN_RPM;
         float p = Math.abs(prevSpeed);
         float c = Math.abs(getSpeed());
-        boolean crossedGate = (p < MIN_SPEED_RPM) != (c < MIN_SPEED_RPM);
+        boolean crossedGate = (p < minRpm) != (c < minRpm);
         if (crossedGate) recalcStress();
     }
 
@@ -199,25 +213,22 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
 
     @Override
     public float calculateStressApplied() {
-        if (activeTier == null)
-            return this.lastStressApplied = 0f;
+        if (activeTier == null) return this.lastStressApplied = 0f;
 
         var state = getBlockState();
         if (!state.hasProperty(LaserDrillControllerBlock.ACTIVE) || !state.getValue(LaserDrillControllerBlock.ACTIVE))
             return this.lastStressApplied = 0f;
 
         float absSpeed = Math.abs(getSpeed());
-        if (absSpeed < MIN_SPEED_RPM)
-            return this.lastStressApplied = 0f;
+        float minRpm = activeTier.minRpm > 0 ? activeTier.minRpm : DEFAULT_MIN_RPM;
+        if (absSpeed < minRpm) return this.lastStressApplied = 0f;
 
-        float baseSuAt128 = (float) ModConfigs.COMMON.getStressForTier(activeTier);
-
-        float impactPerRpm = baseSuAt128 / MIN_SPEED_RPM;
+        double baseSuAt128 = activeTier.stressAt128 * ModConfigs.COMMON.suScale.get();
+        float impactPerRpm = (float) (baseSuAt128 / minRpm);
 
         this.lastStressApplied = impactPerRpm;
         return impactPerRpm;
     }
-
 
     private void doLaserBeamEffects(boolean spawnParticlesToo) {
         if (getActiveTier() == null) return;
@@ -253,7 +264,6 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
                     ModAdvancements.awardTouchedLaser(sp);
                 }
             }
-
         }
 
         if (spawnParticlesToo && level instanceof net.minecraft.server.level.ServerLevel sl) {
@@ -281,10 +291,11 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
     private boolean isLaserActiveClient() {
         if (level == null) return false;
         BlockState st = getBlockState();
+        float minRpm = activeTier != null && activeTier.minRpm > 0 ? activeTier.minRpm : DEFAULT_MIN_RPM;
         return st.hasProperty(LaserDrillControllerBlock.ACTIVE)
                 && st.getValue(LaserDrillControllerBlock.ACTIVE)
                 && activeTier != null
-                && Math.abs(getSpeed()) >= MIN_SPEED_RPM;
+                && Math.abs(getSpeed()) >= minRpm;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -346,9 +357,11 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
             this.z = be.getBlockPos().getZ() + 0.5;
 
             float rpm = Math.abs(be.getSpeed());
-            float t = Mth.clamp(rpm / 256f, 0f, 1f);
-            this.pitch  = 0.95f + 0.35f * t;      // ~0.95 .. 1.30
-            this.volume = 0.18f + 0.22f * t;      // ~0.18 .. 0.40
+            float minRpm = be.getActiveTier() != null && be.getActiveTier().minRpm > 0 ? be.getActiveTier().minRpm : DEFAULT_MIN_RPM;
+            float maxRpm = be.getActiveTier() != null && be.getActiveTier().maxRpm > 0 ? be.getActiveTier().maxRpm : DEFAULT_MAX_RPM;
+            float t = Mth.clamp((rpm - minRpm) / Math.max(1f, (maxRpm - minRpm)), 0f, 1f);
+            this.pitch  = 0.95f + 0.35f * t;
+            this.volume = 0.18f + 0.22f * t;
         }
     }
 

@@ -1,0 +1,9 @@
+{
+  "id": "create_mininglaser:t2",
+  "order": 2,
+  "core_item": "create_mininglaser:drill_core_t2",
+  "stress_at_128": 128.0,
+  "min_rpm": 128,
+  "max_rpm": 256,
+  "head_partial": "create_mininglaser:block/laser_head_t2"
+}

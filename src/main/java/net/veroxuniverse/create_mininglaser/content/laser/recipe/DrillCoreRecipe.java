@@ -4,8 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -16,43 +18,56 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.veroxuniverse.create_mininglaser.content.items.DrillTier;
+import net.veroxuniverse.create_mininglaser.content.items.TierDef;
+import net.veroxuniverse.create_mininglaser.content.items.TierDefs;
 import net.veroxuniverse.create_mininglaser.registry.ModRecipes;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class DrillCoreRecipe implements Recipe<Container> {
 
-    public record EnvFilter(
-            java.util.Set<ResourceLocation> dimensions,
-            java.util.Set<ResourceLocation> biomeIds,
-            java.util.Set<ResourceLocation> biomeTagIds
-    ) {
+    public record EnvFilter(Set<ResourceLocation> dimensions,
+                            Set<ResourceLocation> biomeIds,
+                            Set<ResourceLocation> biomeTagIds) {
         public static final EnvFilter NONE = new EnvFilter(Set.of(), Set.of(), Set.of());
-        public boolean isEmpty() {
-            return dimensions.isEmpty() && biomeIds.isEmpty() && biomeTagIds.isEmpty();
-        }
+        public boolean isEmpty() { return dimensions.isEmpty() && biomeIds.isEmpty() && biomeTagIds.isEmpty(); }
     }
 
     public record Drop(ResourceLocation item, double chance, int min, int max, EnvFilter filter) {}
 
     private final ResourceLocation id;
-    private final DrillTier tier;
+    private final ResourceLocation tierId;
     private final int durationTicks;
     private final List<Drop> drops;
 
-    public DrillCoreRecipe(ResourceLocation id, DrillTier tier, int durationTicks, List<Drop> drops) {
+    public DrillCoreRecipe(ResourceLocation id, ResourceLocation tierId, int durationTicks, List<Drop> drops) {
         this.id = id;
-        this.tier = tier;
+        this.tierId = tierId;
         this.durationTicks = durationTicks;
         this.drops = List.copyOf(drops);
     }
 
-    public DrillTier getTier() { return tier; }
-    public int getDurationTicks(){ return durationTicks; }
+    public ResourceLocation getTierId() { return tierId; }
+    @Nullable
+    public TierDef getTierDef() { return TierDefs.get(tierId); }
+
+    public int getDurationTicks() { return durationTicks; }
     public List<Drop> getDrops() { return drops; }
+
+    public ItemStack rollOnce(RandomSource rand, Level level, BlockPos pos){
+        for (Drop d : drops){
+            if (!envMatches(level, pos, d.filter())) continue;
+            if (rand.nextDouble() <= d.chance()){
+                int count = Mth.nextInt(rand, d.min(), d.max());
+                return new ItemStack(ForgeRegistries.ITEMS.getValue(d.item()), count);
+            }
+        }
+        return ItemStack.EMPTY;
+    }
 
     private static boolean envMatches(Level level, BlockPos pos, EnvFilter f) {
         if (f == null || f.isEmpty()) return true;
@@ -64,35 +79,29 @@ public class DrillCoreRecipe implements Recipe<Container> {
 
         if (!f.biomeIds().isEmpty() || !f.biomeTagIds().isEmpty()) {
             var biomeHolder = level.getBiome(pos);
+
             if (!f.biomeIds().isEmpty()) {
-                ResourceLocation biomeId = level.registryAccess()
-                        .registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
+                var biomeKey = level.registryAccess()
+                        .registryOrThrow(Registries.BIOME)
                         .getKey(biomeHolder.value());
-                if (biomeId == null || !f.biomeIds().contains(biomeId)) return false;
+                if (biomeKey == null || !f.biomeIds().contains(biomeKey))
+                    return false;
             }
+
             if (!f.biomeTagIds().isEmpty()) {
-                var biomeReg = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
+                boolean anyTagMatch = false;
                 for (ResourceLocation tagId : f.biomeTagIds()) {
-                    var tagKey = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BIOME, tagId);
+                    var tagKey = TagKey.create(Registries.BIOME, tagId);
                     if (biomeHolder.is(tagKey)) {
-                        return true; // passt über Tag
+                        anyTagMatch = true;
+                        break;
                     }
                 }
-                if (!f.biomeTagIds().isEmpty()) return false;
+                if (!anyTagMatch) return false;
             }
         }
-        return true;
-    }
 
-    public ItemStack rollOnce(RandomSource rand, Level level, BlockPos pos){
-        for (Drop d : drops){
-            if (!envMatches(level, pos, d.filter())) continue;
-            if (rand.nextDouble() <= d.chance()){
-                int count = Mth.nextInt(rand, d.min(), d.max());
-                return new ItemStack(ForgeRegistries.ITEMS.getValue(d.item()), count);
-            }
-        }
-        return ItemStack.EMPTY;
+        return true;
     }
 
     @Override public boolean matches(Container c, Level l){ return false; }
@@ -106,32 +115,26 @@ public class DrillCoreRecipe implements Recipe<Container> {
     public static class Serializer implements RecipeSerializer<DrillCoreRecipe> {
 
         private static EnvFilter parseEnvFilter(JsonObject o) {
-            java.util.Set<ResourceLocation> dims = new java.util.HashSet<>();
-            java.util.Set<ResourceLocation> biomeIds = new java.util.HashSet<>();
-            java.util.Set<ResourceLocation> biomeTags = new java.util.HashSet<>();
-
-            if (o.has("dimensions")) {
-                for (JsonElement e : GsonHelper.getAsJsonArray(o, "dimensions")) {
+            Set<ResourceLocation> dims = new HashSet<>();
+            Set<ResourceLocation> biomeIds = new HashSet<>();
+            Set<ResourceLocation> biomeTags = new HashSet<>();
+            if (o.has("dimensions"))
+                for (JsonElement e : GsonHelper.getAsJsonArray(o, "dimensions"))
                     dims.add(new ResourceLocation(GsonHelper.convertToString(e, "dimension")));
-                }
-            }
-            if (o.has("biomes")) {
+            if (o.has("biomes"))
                 for (JsonElement e : GsonHelper.getAsJsonArray(o, "biomes")) {
                     String s = GsonHelper.convertToString(e, "biome");
-                    if (s.startsWith("#"))
-                        biomeTags.add(new ResourceLocation(s.substring(1)));
-                    else
-                        biomeIds.add(new ResourceLocation(s));
+                    if (s.startsWith("#")) biomeTags.add(new ResourceLocation(s.substring(1)));
+                    else biomeIds.add(new ResourceLocation(s));
                 }
-            }
-            if (dims.isEmpty() && biomeIds.isEmpty() && biomeTags.isEmpty())
-                return EnvFilter.NONE;
-            return new EnvFilter(dims, biomeIds, biomeTags);
+            return (dims.isEmpty() && biomeIds.isEmpty() && biomeTags.isEmpty())
+                    ? EnvFilter.NONE
+                    : new EnvFilter(dims, biomeIds, biomeTags);
         }
 
         @Override
         public DrillCoreRecipe fromJson(ResourceLocation id, JsonObject json){
-            int tierLvl = GsonHelper.getAsInt(json, "tier");
+            ResourceLocation tierId = new ResourceLocation(GsonHelper.getAsString(json, "tier"));
             int duration = GsonHelper.getAsInt(json, "duration");
             List<Drop> drops = new ArrayList<>();
 
@@ -141,16 +144,15 @@ public class DrillCoreRecipe implements Recipe<Container> {
                 double chance = GsonHelper.getAsDouble(o, "chance");
                 int min = GsonHelper.getAsInt(o, "min", 1);
                 int max = GsonHelper.getAsInt(o, "max", 1);
-                EnvFilter filter = o.has("env") ? parseEnvFilter(GsonHelper.getAsJsonObject(o, "env"))
-                        : EnvFilter.NONE;
+                EnvFilter filter = o.has("env") ? parseEnvFilter(GsonHelper.getAsJsonObject(o, "env")) : EnvFilter.NONE;
                 drops.add(new Drop(item, chance, min, max, filter));
             }
-            return new DrillCoreRecipe(id, DrillTier.fromLevel(tierLvl), duration, drops);
+            return new DrillCoreRecipe(id, tierId, duration, drops);
         }
 
         @Override
         public DrillCoreRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf){
-            int tierLvl = buf.readVarInt();
+            ResourceLocation tierId = buf.readResourceLocation();
             int duration = buf.readVarInt();
             int n = buf.readVarInt();
             List<Drop> drops = new ArrayList<>(n);
@@ -160,27 +162,26 @@ public class DrillCoreRecipe implements Recipe<Container> {
                 int min = buf.readVarInt();
                 int max = buf.readVarInt();
 
-                // env
                 int dCount = buf.readVarInt();
-                java.util.Set<ResourceLocation> dims = new java.util.HashSet<>();
+                Set<ResourceLocation> dims = new HashSet<>();
                 for (int j = 0; j < dCount; j++) dims.add(buf.readResourceLocation());
 
                 int bCount = buf.readVarInt();
-                java.util.Set<ResourceLocation> biomeIds = new java.util.HashSet<>();
+                Set<ResourceLocation> biomeIds = new HashSet<>();
                 for (int j = 0; j < bCount; j++) biomeIds.add(buf.readResourceLocation());
 
                 int tCount = buf.readVarInt();
-                java.util.Set<ResourceLocation> biomeTags = new java.util.HashSet<>();
+                Set<ResourceLocation> biomeTags = new HashSet<>();
                 for (int j = 0; j < tCount; j++) biomeTags.add(buf.readResourceLocation());
 
                 drops.add(new Drop(item, chance, min, max, new EnvFilter(dims, biomeIds, biomeTags)));
             }
-            return new DrillCoreRecipe(id, DrillTier.fromLevel(tierLvl), duration, drops);
+            return new DrillCoreRecipe(id, tierId, duration, drops);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, DrillCoreRecipe rec){
-            buf.writeVarInt(rec.tier.level);
+            buf.writeResourceLocation(rec.tierId);
             buf.writeVarInt(rec.durationTicks);
             buf.writeVarInt(rec.drops.size());
             for (Drop d : rec.drops){
@@ -189,15 +190,14 @@ public class DrillCoreRecipe implements Recipe<Container> {
                 buf.writeVarInt(d.min());
                 buf.writeVarInt(d.max());
 
-                // env
-                EnvFilter f = d.filter();
-                java.util.Set<ResourceLocation> dims = f == null ? java.util.Set.of() : f.dimensions();
-                java.util.Set<ResourceLocation> biomeIds = f == null ? java.util.Set.of() : f.biomeIds();
-                java.util.Set<ResourceLocation> biomeTags = f == null ? java.util.Set.of() : f.biomeTagIds();
+                var f = d.filter();
+                Set<ResourceLocation> dims = f == null ? Set.of() : f.dimensions();
+                Set<ResourceLocation> biomeIds = f == null ? Set.of() : f.biomeIds();
+                Set<ResourceLocation> biomeTags = f == null ? Set.of() : f.biomeTagIds();
 
-                buf.writeVarInt(dims.size());       dims.forEach(buf::writeResourceLocation);
-                buf.writeVarInt(biomeIds.size());   biomeIds.forEach(buf::writeResourceLocation);
-                buf.writeVarInt(biomeTags.size());  biomeTags.forEach(buf::writeResourceLocation);
+                buf.writeVarInt(dims.size());      dims.forEach(buf::writeResourceLocation);
+                buf.writeVarInt(biomeIds.size());  biomeIds.forEach(buf::writeResourceLocation);
+                buf.writeVarInt(biomeTags.size()); biomeTags.forEach(buf::writeResourceLocation);
             }
         }
     }

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.veroxuniverse.create_mininglaser.content.items.TierRegistry;
 import net.veroxuniverse.create_mininglaser.content.laser.LaserDrillControllerRenderer;
 import net.veroxuniverse.create_mininglaser.registry.*;
 import org.slf4j.Logger;
@@ -37,6 +38,12 @@ public class CreateMininglaser {
         ModTabs.register(modEventBus);
         ModPartials.init();
         ModConfigs.register();
+
+        MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListener);
+    }
+
+    private void onAddReloadListener(net.minecraftforge.event.AddReloadListenerEvent e) {
+        e.addListener(TierRegistry.INSTANCE);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

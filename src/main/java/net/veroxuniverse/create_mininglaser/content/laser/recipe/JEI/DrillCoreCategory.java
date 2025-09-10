@@ -13,17 +13,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.veroxuniverse.create_mininglaser.content.items.TierDef;
 import net.veroxuniverse.create_mininglaser.content.laser.recipe.DrillCoreRecipe;
 import net.veroxuniverse.create_mininglaser.registry.ModConfigs;
-import net.veroxuniverse.create_mininglaser.registry.ModItems;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
     private static final ResourceLocation BG = new ResourceLocation("create_mininglaser", "textures/gui/jei/drill_core.png");
     private final IDrawable background;
     private final IDrawable icon;
+
+    private static final int TOOLTIP_SECTION_LIMIT = 6;
 
     public DrillCoreCategory(IDrawable background, IDrawable icon) {
         this.background = background;
@@ -35,83 +39,108 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
     @Override public IDrawable getBackground() { return background; }
     @Override public IDrawable getIcon() { return icon; }
 
-    private static Component prettyDimension(ResourceLocation id) {
-        String key = "dimension." + id.getNamespace() + "." + id.getPath();
-        Component trans = Component.translatable(key);
-
-        String raw = trans.getString();
-        if (raw.equals(key)) {
-            String nice = id.getPath()
-                    .replace('_', ' ')
-                    .replace('/', ' ')
-                    .replace('.', ' ')
-                    .replace('-', ' ');
-            nice = titleCase(nice);
-            if (!"minecraft".equals(id.getNamespace()))
-                nice = id.getNamespace() + ": " + nice;
-            return Component.literal(nice);
-        }
-        return trans;
-    }
-
     private static String titleCase(String s) {
         StringBuilder out = new StringBuilder(s.length());
-        boolean capitalizeNext = true;
+        boolean cap = true;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (capitalizeNext && Character.isLetter(c)) {
+            if (cap && Character.isLetter(c)) {
                 out.append(Character.toTitleCase(c));
-                capitalizeNext = false;
+                cap = false;
             } else {
                 out.append(c);
             }
             if (c == ' ' || c == '-' || c == '_' || c == '/' || c == '.')
-                capitalizeNext = true;
+                cap = true;
         }
         return out.toString();
     }
 
-    private static Component prettyBiome(ResourceLocation biomeId) {
-        return Component.translatable("biome." + biomeId.getNamespace() + "." + biomeId.getPath());
-    }
+    private static Component prettyDimension(ResourceLocation id) {
+        if ("minecraft".equals(id.getNamespace())) {
+            switch (id.getPath()) {
+                case "overworld":  return Component.literal("Overworld");
+                case "the_nether": return Component.literal("The Nether");
+                case "the_end":    return Component.literal("The End");
+            }
+        }
+        String key = "dimension." + id.getNamespace() + "." + id.getPath();
+        Component trans = Component.translatable(key);
+        String raw = trans.getString();
+        if (!raw.equals(key)) return trans;
 
-    private static Component prettyTag(ResourceLocation tagId) {
-        String nice = "#" + tagId.getPath().replace('_', ' ');
-        if (!"minecraft".equals(tagId.getNamespace()))
-            nice = "#" + tagId.getNamespace() + ":" + tagId.getPath().replace('_', ' ');
+        String nice = id.getPath()
+                .replace('_', ' ')
+                .replace('/', ' ')
+                .replace('.', ' ')
+                .replace('-', ' ');
+        nice = titleCase(nice);
+        if (!"minecraft".equals(id.getNamespace()))
+            nice = id.getNamespace() + ": " + nice;
         return Component.literal(nice);
     }
 
-    private static String capitalizeWords(String s) {
-        String[] parts = s.split("\\s+");
-        StringBuilder out = new StringBuilder();
-        for (int i = 0; i < parts.length; i++) {
-            String p = parts[i];
-            if (!p.isEmpty()) {
-                out.append(Character.toUpperCase(p.charAt(0)));
-                if (p.length() > 1) out.append(p.substring(1));
-            }
-            if (i + 1 < parts.length) out.append(' ');
-        }
-        return out.toString();
+    private static Component prettyBiome(ResourceLocation biomeId) {
+        Component trans = Component.translatable("biome." + biomeId.getNamespace() + "." + biomeId.getPath());
+        String raw = trans.getString();
+        if (!raw.equals("biome." + biomeId.getNamespace() + "." + biomeId.getPath()))
+            return trans;
+
+        String nice = titleCase(biomeId.getPath().replace('_', ' '));
+        if (!"minecraft".equals(biomeId.getNamespace()))
+            nice = biomeId.getNamespace() + ": " + nice;
+        return Component.literal(nice);
     }
 
-    private static void addWrappedList(List<Component> tooltip, Component title, List<Component> lines) {
+    private static Component prettyTag(ResourceLocation tagId) {
+        String nice = titleCase(tagId.getPath().replace('_', ' '));
+        if (!"minecraft".equals(tagId.getNamespace()))
+            return Component.literal("#" + tagId.getNamespace() + ":" + nice);
+        return Component.literal("#" + nice);
+    }
+
+    private static void addWrappedList(List<Component> tooltip, Component title, List<Component> lines, int limit) {
         if (lines.isEmpty()) return;
         tooltip.add(title.copy().withStyle(ChatFormatting.GRAY));
+        int shown = 0;
         for (Component c : lines) {
+            if (shown >= limit) break;
             tooltip.add(Component.literal("  ").append(c).withStyle(ChatFormatting.DARK_GREEN));
+            shown++;
         }
+        if (lines.size() > limit) {
+            int more = lines.size() - limit;
+            tooltip.add(Component.literal("  … +" + more + " more").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        }
+    }
+
+    private static String formatSU(double su) {
+        NumberFormat nf = NumberFormat.getIntegerInstance(Locale.US);
+        return nf.format(Math.round(su));
+    }
+
+    private static String formatChance(double chance) {
+        double pct = chance * 100.0;
+        if (Math.abs(pct - Math.round(pct)) < 1e-6) return String.format(Locale.US, "%.0f%%", pct);
+        return String.format(Locale.US, "%.1f%%", pct);
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder b, DrillCoreRecipe r, IFocusGroup focuses) {
+        final TierDef def = r.getTierDef();
+        if (def == null) return;
+
+        var coreItem = ForgeRegistries.ITEMS.getValue(def.coreItem);
+        var coreStack = coreItem != null ? new ItemStack(coreItem) : ItemStack.EMPTY;
 
         b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, 20, 20)
-                .addItemStack(new ItemStack(ModItems.byTier(r.getTier())))
+                .addItemStack(coreStack)
                 .addTooltipCallback((view, tooltip) -> {
-                    double su = ModConfigs.COMMON.getStressForTier(r.getTier());
-                    tooltip.add(Component.literal(String.format("Stress: %.0f SU", su)).withStyle(ChatFormatting.WHITE));
+                    double su128 = def.stressAt128 * ModConfigs.COMMON.suScale.get();
+                    tooltip.add(Component.literal("Stress @" + def.minRpm + " RPM: " + formatSU(su128) + " SU")
+                            .withStyle(ChatFormatting.WHITE));
+                    tooltip.add(Component.literal("Min Speed: " + def.minRpm + " RPM")
+                            .withStyle(ChatFormatting.GRAY));
                 });
 
         int x = 60;
@@ -120,26 +149,28 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
             b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT, x, y)
                     .addItemStack(new ItemStack(ForgeRegistries.ITEMS.getValue(drop.item())))
                     .addTooltipCallback((view, tooltip) -> {
-                        tooltip.add(Component.literal(String.format("Chance: %.0f%%", drop.chance() * 100)).withStyle(ChatFormatting.WHITE));
+                        tooltip.add(Component.literal("Chance: " + formatChance(drop.chance()))
+                                .withStyle(ChatFormatting.WHITE));
                         if (drop.min() != drop.max())
-                            tooltip.add(Component.literal("Amount: " + drop.min() + "–" + drop.max()).withStyle(ChatFormatting.WHITE));
+                            tooltip.add(Component.literal("Amount: " + drop.min() + "–" + drop.max())
+                                    .withStyle(ChatFormatting.WHITE));
 
                         var f = drop.filter();
                         if (f != null && !f.isEmpty()) {
                             if (!f.dimensions().isEmpty()) {
                                 List<Component> dims = new ArrayList<>();
                                 for (ResourceLocation rl : f.dimensions()) dims.add(prettyDimension(rl));
-                                addWrappedList(tooltip, Component.literal("Dimensions:"), dims);
+                                addWrappedList(tooltip, Component.literal("Dimensions:"), dims, TOOLTIP_SECTION_LIMIT);
                             }
                             if (!f.biomeIds().isEmpty()) {
                                 List<Component> biomes = new ArrayList<>();
                                 for (ResourceLocation rl : f.biomeIds()) biomes.add(prettyBiome(rl));
-                                addWrappedList(tooltip, Component.literal("Biomes:"), biomes);
+                                addWrappedList(tooltip, Component.literal("Biomes:"), biomes, TOOLTIP_SECTION_LIMIT);
                             }
                             if (!f.biomeTagIds().isEmpty()) {
                                 List<Component> tags = new ArrayList<>();
                                 for (ResourceLocation rl : f.biomeTagIds()) tags.add(prettyTag(rl));
-                                addWrappedList(tooltip, Component.literal("Biome Tags:"), tags);
+                                addWrappedList(tooltip, Component.literal("Biome Tags:"), tags, TOOLTIP_SECTION_LIMIT);
                             }
                         }
                     });
@@ -151,10 +182,13 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
     public void draw(DrillCoreRecipe r, IRecipeSlotsView v, GuiGraphics g, double mx, double my) {
         var font = Minecraft.getInstance().font;
 
-        double su = ModConfigs.COMMON.getStressForTier(r.getTier());
-        String timeText = String.format("%.1f s", r.getDurationTicks() / 20.0);
-        String suText   = String.format("%.0f SU", su);
-        String rpmText  = "≥128 RPM";
+        final TierDef def = r.getTierDef();
+        if (def == null) return;
+
+        double su128 = def.stressAt128 * ModConfigs.COMMON.suScale.get();
+        String timeText = String.format(Locale.US, "%.1f s", r.getDurationTicks() / 20.0);
+        String suText   = formatSU(su128) + " SU";
+        String rpmText  = "≥" + def.minRpm + " RPM";
 
         int topY = 6;
         g.drawString(font, timeText, 8,  topY, 0xFFFFFF, false);

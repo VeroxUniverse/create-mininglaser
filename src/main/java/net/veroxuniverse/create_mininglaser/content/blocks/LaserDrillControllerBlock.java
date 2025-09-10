@@ -23,7 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.veroxuniverse.create_mininglaser.content.items.DrillCoreItem;
+import net.veroxuniverse.create_mininglaser.content.items.TierDef;
+import net.veroxuniverse.create_mininglaser.content.items.TierDefs;
 import net.veroxuniverse.create_mininglaser.registry.ModBlockEntities;
 import net.veroxuniverse.create_mininglaser.registry.MultiblockHandler;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +84,8 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
             BlockEntity be = level.getBlockEntity(pos);
             if (!(be instanceof LaserDrillControllerBlockEntity drill)) return InteractionResult.PASS;
 
-            if (heldItem.getItem() instanceof DrillCoreItem && drill.getCore().isEmpty()) {
+            TierDef def = TierDefs.byCoreItem(heldItem.getItem());
+            if (def != null && drill.getCore().isEmpty()) {
                 if (!state.getValue(LaserDrillControllerBlock.ACTIVE)) {
                     player.displayClientMessage(Component.literal("§cController is not active."), true);
                     return InteractionResult.SUCCESS;
