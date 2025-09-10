@@ -20,18 +20,18 @@ This README shows:
 ├── data/
 │   └── <namespace>/
 │           ├── drill_tiers/
-│           │   └── my_tier.json                <-- TierDef (data-driven)
+│           │   └── t10.json                <-- TierDef (data-driven)
 │           └── recipes/
 │               └── drill_core/
-│                   └── my_tier_ores.json       <-- DrillCore recipe(s)
+│                   └── t10_ores.json       <-- DrillCore recipe(s)
 └── assets/
     └── <namespace>/
         ├── models/
         │   └── block/
-        │       └── laser_head_my_tier.json     <-- Head model (inherits from base)
+        │       └── laser_head_t10.json     <-- Head model (inherits from base)
         └── textures/
             └── block/
-                └── laser_head_my_tier.png      <-- Head texture (same UV layout as base)
+                └── laser_head_t10.png      <-- Head texture (same UV layout as base)
 ```
 
 ---
@@ -51,13 +51,13 @@ data/<namespace>/drill_tiers/<tier_id>.json
 ```jsonc
 {
   // (optional) if omitted, the id is inferred from the filename
-  "id": "my_tier",
+  "id": "<namespace>:t10",
 
   // sort order in JEI/tooltips (lower = earlier)
   "order": 10,
 
   // the item that must be inserted into the controller to activate this tier
-  "core_item": "my_mod:rose_quartz_laser_core",
+  "core_item": "<namespace>:drill_core_t10",
 
   // base stress draw at min_rpm (scaled by the config suScale)
   // e.g. 32.0 with suScale=1000 => 32,000 SU shown/consumed at min_rpm
@@ -70,7 +70,7 @@ data/<namespace>/drill_tiers/<tier_id>.json
 
   // the partial model to render as the head (block model ResourceLocation, without "models/")
   // this file will be under assets/create_mininglaser/models/block/...
-  "head_partial": "create_mininglaser:block/laser_head_my_tier"
+  "head_partial": "<namespace>:block/laser_head_t10"
 }
 ```
 
@@ -88,8 +88,8 @@ Every tier points to a **partial block model** via `head_partial`. New heads sho
 
 Place files here:
 
-- Model: `assets/<namespace>/models/block/laser_head_my_tier.json`
-- Texture: `assets/<namespace>/textures/block/laser_head_my_tier.png`
+- Model: `assets/<namespace>/models/block/laser_head_t10.json`
+- Texture: `assets/<namespace>/textures/block/laser_head_t10.png`
 
 > Keep your texture’s resolution and UV layout compatible with the base (the base uses a 64×64 sheet). If you change UVs, you’ll need a full model edit.
 
@@ -103,7 +103,7 @@ The mod ships a base head model (e.g. `laser_head_t1.json`). Your custom models 
 {
   "parent": "create_mininglaser:block/laser_head_t1",
   "textures": {
-    "1": "<namespace>:block/laser_head_my_tier",
+    "1": "<namespace>:block/laser_head_t10r",
     "particle": "create_mininglaser:block/drill_casing"
   }
 }
@@ -130,7 +130,7 @@ data/<namespace>/recipes/drill_core/<name>.json
   "type": "create_mininglaser:drill_core",
 
   // link to your tier by id (the file name or "id" field of your TierDef)
-  "tier": "<namespace>:my_tier",
+  "tier": "<namespace>:t10",
 
   // base duration in ticks (20 ticks = 1 second) @ 1× speed
   // effective time is divided by speed multiplier (up to 2× at max_rpm)
@@ -220,12 +220,13 @@ data/<namespace>/recipes/drill_core/<name>.json
 
 ## 7) Complete minimal examples
 
-### Tier: `my_tier`
+### Tier: `t10`
 
-`data/rose_quartz_drills/drill_tiers/rose_tier.json`
+`data/rose_quartz_drills/drill_tiers/t10.json`
 
 ```json
 {
+  "id": "rose_quartz_drills:t10",
   "order": 10,
   "core_item": "rose_quartz_drills:rose_quartz_laser_t10",
   "stress_at_128": 32.0,
@@ -259,7 +260,7 @@ data/<namespace>/recipes/drill_core/<name>.json
 ```json
 {
   "type": "create_mininglaser:drill_core",
-  "tier": "rose_quartz_drills:rose_quartz_laser_t10",
+  "tier": "rose_quartz_drills:t10",
   "duration": 200,
   "drops": [
     {
