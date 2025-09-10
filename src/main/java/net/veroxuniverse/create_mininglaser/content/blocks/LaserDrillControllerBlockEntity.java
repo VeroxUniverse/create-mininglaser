@@ -223,7 +223,7 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
         float minRpm = activeTier.minRpm > 0 ? activeTier.minRpm : DEFAULT_MIN_RPM;
         if (absSpeed < minRpm) return this.lastStressApplied = 0f;
 
-        double baseSuAt128 = activeTier.stressAt128 * ModConfigs.COMMON.suScale.get();
+        double baseSuAt128 = activeTier.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
         float impactPerRpm = (float) (baseSuAt128 / minRpm);
 
         this.lastStressApplied = impactPerRpm;

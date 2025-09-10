@@ -61,7 +61,7 @@ data/<namespace>/drill_tiers/<tier_id>.json
 
   // base stress draw at min_rpm (scaled by the config suScale)
   // e.g. 32.0 with suScale=1000 => 32,000 SU shown/consumed at min_rpm
-  "stress_at_128": 32.0,
+  "stress_at_minRPM": 32.0,
 
   // RPM gate for this tier; the drill does nothing below this
   "min_rpm": 128,
@@ -76,7 +76,7 @@ data/<namespace>/drill_tiers/<tier_id>.json
 
 ### Notes
 
-- **`stress_at_128`** is interpreted at the tier’s **`min_rpm`** (default 128). The config multiplier `suScale` is applied on top (see “Config” below).
+- **`stress_at_minRPM`** is interpreted at the tier’s **`min_rpm`** (default 128). The config multiplier `suScale` is applied on top (see “Config” below).
 - **`core_item`** can be **any existing item** (from your mod or others). You do **not** need a special item class—just reference it here.
 - **`head_partial`** must point to a **block model** (see next section).
 
@@ -152,7 +152,11 @@ data/<namespace>/recipes/drill_core/<name>.json
         // biomes: either explicit ids...
         // "biomes": ["minecraft:old_growth_pine_taiga"]
         // ...or tags prefixed with '#'
-        "biomes": ["#minecraft:is_overworld"]
+        "biomes": 
+        [
+        "#minecraft:is_overworld",
+        "minecraft:plains"
+        ]
       }
     },
 
@@ -181,7 +185,7 @@ data/<namespace>/recipes/drill_core/<name>.json
 
 - **RPM gate:** The drill **does nothing** below `min_rpm` for the active tier.
 - **Speed multiplier:** At `min_rpm` you get **1×** speed; it scales linearly up to **2×** at `max_rpm` (clamped).
-- **Stress draw:** At `min_rpm` the drill draws `stress_at_128 × suScale` SU.  
+- **Stress draw:** At `min_rpm` the drill draws `stress_at_minRPM × suScale` SU.  
   The mod reports **impact per RPM** to Create so the network sees the correct load.
 - **JEI:** Displays the tier’s core item, duration, stress (with config scale), and filters as friendly text.
 
@@ -191,7 +195,7 @@ data/<namespace>/recipes/drill_core/<name>.json
 
 `create_mininglaser-common.toml`:
 
-- `suScale` — global multiplier applied to all tiers’ `stress_at_128`.  
+- `suScale` — global multiplier applied to all tiers’ `stress_at_minRPM`.  
   Example: `1000.0` means a tier value of `32.0` renders/consumes **32,000 SU** at `min_rpm`.
 
 ---
@@ -229,7 +233,7 @@ data/<namespace>/recipes/drill_core/<name>.json
   "id": "rose_quartz_drills:t10",
   "order": 10,
   "core_item": "rose_quartz_drills:rose_quartz_laser_t10",
-  "stress_at_128": 32.0,
+  "stress_at_minRPM": 32.0,
   "min_rpm": 128,
   "max_rpm": 256,
   "head_partial": "rose_quartz_drills:block/laser_head_rose_quartz"

@@ -136,7 +136,7 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, 20, 20)
                 .addItemStack(coreStack)
                 .addTooltipCallback((view, tooltip) -> {
-                    double su128 = def.stressAt128 * ModConfigs.COMMON.suScale.get();
+                    double su128 = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
                     tooltip.add(Component.literal("Stress @" + def.minRpm + " RPM: " + formatSU(su128) + " SU")
                             .withStyle(ChatFormatting.WHITE));
                     tooltip.add(Component.literal("Min Speed: " + def.minRpm + " RPM")
@@ -185,7 +185,7 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         final TierDef def = r.getTierDef();
         if (def == null) return;
 
-        double su128 = def.stressAt128 * ModConfigs.COMMON.suScale.get();
+        double su128 = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
         String timeText = String.format(Locale.US, "%.1f s", r.getDurationTicks() / 20.0);
         String suText   = formatSU(su128) + " SU";
         String rpmText  = "≥" + def.minRpm + " RPM";

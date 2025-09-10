@@ -28,12 +28,12 @@ public class ModConfigs {
             suScale = b.comment(
                             "Global SU multiplier applied to ALL tiers defined via data.",
                             "IMPORTANT:",
-                            " - Tier JSON uses unscaled values for stress_at_128.",
-                            " - Effective SU at 128 RPM = stress_at_128 * suScale.",
+                            " - Tier JSON uses unscaled values for stress_at_minRPM.",
+                            " - Effective SU at 128 RPM = stress_at_minRPM * suScale.",
                             " - At higher RPM the drill runs faster and consumes proportionally more SU.",
                             "Examples:",
-                            "  - suScale = 1000.0 and stress_at_128 = 32.0  -> 32,000 SU at 128 RPM",
-                            "  - suScale = 1.0    and stress_at_128 = 32000 -> 32,000 SU at 128 RPM"
+                            "  - suScale = 1000.0 and stress_at_minRPM = 32.0  -> 32,000 SU at 128 RPM",
+                            "  - suScale = 1.0    and stress_at_minRPM = 32000 -> 32,000 SU at 128 RPM"
                     )
                     .defineInRange("suScale", 1000.0, 0.0, 1.0e6);
 

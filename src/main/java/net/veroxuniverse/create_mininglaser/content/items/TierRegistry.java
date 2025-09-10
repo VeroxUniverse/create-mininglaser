@@ -42,7 +42,7 @@ public final class TierRegistry extends SimpleJsonResourceReloadListener {
         ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(o, "id", fileId.toString()));
         int order = GsonHelper.getAsInt(o, "order");
         ResourceLocation core = new ResourceLocation(GsonHelper.getAsString(o, "core_item"));
-        double su128 = GsonHelper.getAsDouble(o, "stress_at_128");
+        double su128 = GsonHelper.getAsDouble(o, "stress_at_minRPM");
         int min = GsonHelper.getAsInt(o, "min_rpm", 128);
         int max = GsonHelper.getAsInt(o, "max_rpm", 256);
         ResourceLocation head = o.has("head_partial")
