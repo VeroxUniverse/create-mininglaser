@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": { "item": "create_mininglaser:drill_casing" },
+    "title": { "translate": "adv.create_mininglaser.root.title" },
+    "description": { "translate": "adv.create_mininglaser.root.desc" },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "on_world_join": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    ["on_world_join"]
+  ]
+}

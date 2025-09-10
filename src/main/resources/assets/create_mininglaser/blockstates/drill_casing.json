@@ -1,0 +1,63 @@
+{
+  "multipart": [
+    {
+      "when": { "formed": "false" },
+      "apply": { "model": "create_mininglaser:block/drill_casing" }
+    },
+
+    { "when": { "formed": "true", "variant": "bottom_nw", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_nw", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_nw", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_nw", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_nw", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_nw", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_nw", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_nw", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_n", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_n", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_n", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_n", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_n", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_n", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_n", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_n", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_ne", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_ne", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_ne", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_ne", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_ne", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_ne", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_ne", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_ne", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_w", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_w", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_w", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_w", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_w", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_w", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_w", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_w", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_e", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_e", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_e", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_e", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_e", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_e", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_e", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_e", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_sw", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_sw", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_sw", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_sw", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_sw", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_sw", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_sw", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_sw", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_s", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_s", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_s", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_s", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_s", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_s", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_s", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_s", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "bottom_se", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_bottom_se", "y": 0 } },
+    { "when": { "formed": "true", "variant": "bottom_se", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_bottom_se", "y": 180 } },
+    { "when": { "formed": "true", "variant": "bottom_se", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_se", "y": 270 } },
+    { "when": { "formed": "true", "variant": "bottom_se", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_bottom_se", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "top_left", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_top_left", "y": 0 } },
+    { "when": { "formed": "true", "variant": "top_left", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_top_left", "y": 180 } },
+    { "when": { "formed": "true", "variant": "top_left", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_top_left", "y": 270 } },
+    { "when": { "formed": "true", "variant": "top_left", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_top_left", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "top_front", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_top_front", "y": 0 } },
+    { "when": { "formed": "true", "variant": "top_front", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_top_front", "y": 180 } },
+    { "when": { "formed": "true", "variant": "top_front", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_top_front", "y": 270 } },
+    { "when": { "formed": "true", "variant": "top_front", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_top_front", "y": 90 } },
+
+    { "when": { "formed": "true", "variant": "top_back", "facing": "north" }, "apply": { "model": "create_mininglaser:block/casing_top_back", "y": 0 } },
+    { "when": { "formed": "true", "variant": "top_back", "facing": "south" }, "apply": { "model": "create_mininglaser:block/casing_top_back", "y": 180 } },
+    { "when": { "formed": "true", "variant": "top_back", "facing": "west"  }, "apply": { "model": "create_mininglaser:block/casing_top_back", "y": 270 } },
+    { "when": { "formed": "true", "variant": "top_back", "facing": "east"  }, "apply": { "model": "create_mininglaser:block/casing_top_back", "y": 90 } }
+  ]
+}

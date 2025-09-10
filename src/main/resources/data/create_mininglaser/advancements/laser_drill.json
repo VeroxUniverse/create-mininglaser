@@ -1,0 +1,22 @@
+{
+  "parent": "create_mininglaser:root",
+  "display": {
+    "icon": { "item": "create_mininglaser:laser_drill" },
+    "title": { "translate": "adv.create_mininglaser.laser_drill.title" },
+    "description": { "translate": "adv.create_mininglaser.laser_drill.desc" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_laser_drill": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "item": "create_mininglaser:laser_drill" }
+        ]
+      }
+    }
+  }
+}

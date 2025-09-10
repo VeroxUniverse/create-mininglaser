@@ -1,0 +1,19 @@
+{
+  "parent": "create_mininglaser:core_t4",
+  "display": {
+    "icon": { "item": "create_mininglaser:drill_core_t5" },
+    "title": { "translate": "adv.create_mininglaser.core_t5.title" },
+    "description": { "translate": "adv.create_mininglaser.core_t5.desc" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_core_t5": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [ { "items": ["create_mininglaser:drill_core_t5"] } ] }
+    }
+  },
+  "requirements": [["has_core_t5"]]
+}

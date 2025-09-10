@@ -1,0 +1,34 @@
+{
+  "death.attack.laser.1": "%1$s was vaporized by the mining laser",
+  "death.attack.laser.2": "%1$s was reduced to dust by the laser beam",
+  "death.attack.laser.3": "%1$s vanished in the blinding light of the laser",
+  "death.attack.laser.4": "%1$s was precisely pierced by the laser",
+  "death.attack.laser.player.1": "%1$s was vaporized by the mining laser while fighting %2$s",
+  "death.attack.laser.player.2": "%1$s was reduced to dust by the laser beam while fighting %2$s",
+  "death.attack.laser.player.3": "%1$s vanished in the blinding light of the laser while fighting %2$s",
+  "death.attack.laser.player.4": "%1$s was precisely pierced by the laser while fighting %2$s",
+
+  "adv.create_mininglaser.root.title": "Create Mining Laser's",
+  "adv.create_mininglaser.root.desc": "Harness the power of focused light!",
+
+  "adv.create_mininglaser.laser_drill.title": "Laser Drill",
+  "adv.create_mininglaser.laser_drill.desc": "Assemble or obtain the Laser Drill.",
+
+  "adv.create_mininglaser.core_t1.title": "Tier 1 Core",
+  "adv.create_mininglaser.core_t1.desc": "Obtain a Tier 1 drill core.",
+
+  "adv.create_mininglaser.core_t2.title": "Tier 2 Core",
+  "adv.create_mininglaser.core_t2.desc": "Obtain a Tier 2 drill core.",
+
+  "adv.create_mininglaser.core_t3.title": "Tier 3 Core",
+  "adv.create_mininglaser.core_t3.desc": "Obtain a Tier 3 drill core.",
+
+  "adv.create_mininglaser.core_t4.title": "Tier 4 Core",
+  "adv.create_mininglaser.core_t4.desc": "Obtain a Tier 4 drill core.",
+
+  "adv.create_mininglaser.core_t5.title": "Tier 5 Core",
+  "adv.create_mininglaser.core_t5.desc": "Obtain a Tier 5 drill core.",
+
+  "adv.create_mininglaser.laser_touch.title": "Ouch!",
+  "adv.create_mininglaser.laser_touch.desc": "Get in contact with the mining laser beam."
+}

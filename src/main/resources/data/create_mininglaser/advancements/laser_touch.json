@@ -1,0 +1,18 @@
+{
+  "parent": "create_mininglaser:laser_drill",
+  "display": {
+    "icon": { "item": "minecraft:redstone" },
+    "title": { "translate": "adv.create_mininglaser.laser_touch.title" },
+    "description": { "translate": "adv.create_mininglaser.laser_touch.desc" },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "touched_laser": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [
+    ["touched_laser"]
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "create_mininglaser:block/drill_casing",
+    "east": "create_mininglaser:block/drill_hatch",
+    "north": "create_mininglaser:block/drill_hatch",
+    "particle": "create_mininglaser:block/drill_casing",
+    "south": "create_mininglaser:block/drill_hatch",
+    "up": "create_mininglaser:block/drill_casing",
+    "west": "create_mininglaser:block/drill_hatch"
+  }
+}
