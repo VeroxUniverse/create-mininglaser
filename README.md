@@ -1,4 +1,4 @@
-# Create Mining Laser — Datapack Guide
+# Create Mining Laser - Datapack Guide
 
 This mod is **data-driven**: tiers, recipes, models, and textures can be added or replaced from a resource/data pack (or another mod).
 
@@ -16,17 +16,16 @@ This README shows:
 ## Directory layout (TL;DR)
 
 ```
-my_pack/
+<namespace>/
 ├── data/
-│   └── mypack/
-│       └── create_mininglaser/
-│           ├── tiers/
+│   └── <namespace>/
+│           ├── drill_tiers/
 │           │   └── my_tier.json                <-- TierDef (data-driven)
 │           └── recipes/
 │               └── drill_core/
 │                   └── my_tier_ores.json       <-- DrillCore recipe(s)
 └── assets/
-    └── create_mininglaser/
+    └── <namespace>/
         ├── models/
         │   └── block/
         │       └── laser_head_my_tier.json     <-- Head model (inherits from base)
@@ -44,7 +43,7 @@ A **tier** defines: which **core item** activates it, its **RPM gate**, its **st
 Create a file at:
 
 ```
-data/<namespace>/create_mininglaser/tiers/<tier_id>.json
+data/<namespace>/drill_tiers/<tier_id>.json
 ```
 
 ### Tier JSON schema
@@ -89,8 +88,8 @@ Every tier points to a **partial block model** via `head_partial`. New heads sho
 
 Place files here:
 
-- Model: `assets/create_mininglaser/models/block/laser_head_my_tier.json`
-- Texture: `assets/create_mininglaser/textures/block/laser_head_my_tier.png`
+- Model: `assets/<namespace>/models/block/laser_head_my_tier.json`
+- Texture: `assets/<namespace>/textures/block/laser_head_my_tier.png`
 
 > Keep your texture’s resolution and UV layout compatible with the base (the base uses a 64×64 sheet). If you change UVs, you’ll need a full model edit.
 
@@ -104,7 +103,7 @@ The mod ships a base head model (e.g. `laser_head_t1.json`). Your custom models 
 {
   "parent": "create_mininglaser:block/laser_head_t1",
   "textures": {
-    "1": "create_mininglaser:block/laser_head_my_tier",
+    "1": "<namespace>:block/laser_head_my_tier",
     "particle": "create_mininglaser:block/drill_casing"
   }
 }
@@ -121,7 +120,7 @@ Recipes tell the drill **what to roll** while the specified tier is active. They
 Create files at:
 
 ```
-data/<namespace>/create_mininglaser/recipes/drill_core/<anything>.json
+data/<namespace>/recipes/drill_core/<name>.json
 ```
 
 ### Recipe JSON schema
@@ -131,7 +130,7 @@ data/<namespace>/create_mininglaser/recipes/drill_core/<anything>.json
   "type": "create_mininglaser:drill_core",
 
   // link to your tier by id (the file name or "id" field of your TierDef)
-  "tier": "mypack:my_tier",
+  "tier": "<namespace>:my_tier",
 
   // base duration in ticks (20 ticks = 1 second) @ 1× speed
   // effective time is divided by speed multiplier (up to 2× at max_rpm)
@@ -188,7 +187,7 @@ data/<namespace>/create_mininglaser/recipes/drill_core/<anything>.json
 
 ---
 
-## 5) Config knobs (server config)
+## 5) Config (server config)
 
 `create_mininglaser-common.toml`:
 
@@ -200,7 +199,7 @@ data/<namespace>/create_mininglaser/recipes/drill_core/<anything>.json
 ## 6) Troubleshooting
 
 - **Recipe not showing / not rolling**
-  - File path must be `data/<ns>/create_mininglaser/recipes/drill_core/*.json`.
+  - File path must be `data/<namespace>/recipes/drill_core/*.json`.
   - `"type"` must be exactly `"create_mininglaser:drill_core"`.
   - `"tier"` must match the tier’s **id** (from your tier JSON file name or `"id"` field).
   - Check logs on `/reload` for JSON or registry errors.
@@ -210,9 +209,9 @@ data/<namespace>/create_mininglaser/recipes/drill_core/<anything>.json
   - Ensure `min_rpm` is reachable by your Create network.
 
 - **Head model not rendering**
-  - `head_partial` must point to an existing block model JSON in `assets/.../models/block/...`
+  - `head_partial` must point to an existing block model JSON in `assets/<namespace>/models/block/...`
   - If you inherit, verify `"parent": "create_mininglaser:block/laser_head_t1"`.
-  - Texture paths must exist under `assets/create_mininglaser/textures/block/`.
+  - Texture paths must exist under `assets/<namespace>/textures/block/`.
 
 - **Texture looks scrambled**
   - Use the **same UV layout** as the base. Keep your texture **64×64** to match the base head unless you replicated all UVs.
@@ -223,44 +222,44 @@ data/<namespace>/create_mininglaser/recipes/drill_core/<anything>.json
 
 ### Tier: `my_tier`
 
-`data/mypack/create_mininglaser/tiers/my_tier.json`
+`data/rose_quartz_drills/drill_tiers/rose_tier.json`
 
 ```json
 {
   "order": 10,
-  "core_item": "my_mod:rose_quartz_laser_core",
+  "core_item": "rose_quartz_drills:rose_quartz_laser_t10",
   "stress_at_128": 32.0,
   "min_rpm": 128,
   "max_rpm": 256,
-  "head_partial": "create_mininglaser:block/laser_head_my_tier"
+  "head_partial": "rose_quartz_drills:block/laser_head_rose_quartz"
 }
 ```
 
 ### Head model inheriting from base
 
-`assets/create_mininglaser/models/block/laser_head_my_tier.json`
+`assets/rose_quartz_drills/models/block/laser_head_rose_quartz.json`
 
 ```json
 {
   "parent": "create_mininglaser:block/laser_head_t1",
   "textures": {
-    "1": "create_mininglaser:block/laser_head_my_tier",
+    "1": "rose_quartz_drills:block/laser_head_rose_quartz",
     "particle": "create_mininglaser:block/drill_casing"
   }
 }
 ```
 
-`assets/create_mininglaser/textures/block/laser_head_my_tier.png`  
+`assets/rose_quartz_drills/textures/block/laser_head_rose_quartz.png`  
 (64×64 PNG matching the base UVs)
 
 ### Recipe for that tier
 
-`data/mypack/create_mininglaser/recipes/drill_core/my_tier_ores.json`
+`data/rose_quartz_drills/recipes/drill_core/rose_quartz_laser_ores.json`
 
 ```json
 {
   "type": "create_mininglaser:drill_core",
-  "tier": "mypack:my_tier",
+  "tier": "rose_quartz_drills:rose_quartz_laser_t10",
   "duration": 200,
   "drops": [
     {
@@ -297,4 +296,4 @@ Feel free to open issues/PRs with new example tiers and recipes. Include your da
 
 ---
 
-If anything in this guide doesn’t match your build (field names or paths), check your log on `/reload`—the mod will print where it expects tier and recipe files, and any JSON parse errors.
+If anything in this guide doesn’t match your build (field names or paths), check your log on `/reload` - the mod will print where it expects tier and recipe files, and any JSON parse errors.
