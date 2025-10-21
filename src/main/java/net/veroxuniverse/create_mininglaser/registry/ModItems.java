@@ -27,6 +27,25 @@ public class ModItems {
     public static final RegistryObject<Item> DRILL_CORE_T5 = ITEMS.register("drill_core_t5",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
+    public static final RegistryObject<Item> LASER_MECHANISM = ITEMS.register("laser_mechanism",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> CRYSTAL_T2 = ITEMS.register("crystal_t2",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> CRYSTAL_T3 = ITEMS.register("crystal_t3",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> CRYSTAL_T4 = ITEMS.register("crystal_t4",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> CRYSTAL_T5 = ITEMS.register("crystal_t5",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> CRYSTAL_T6 = ITEMS.register("crystal_t6",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

@@ -1,0 +1,27 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "tier": "create_mininglaser:t1",
+  "duration": 600,
+  "drops": [
+    {
+      "item": "minecraft:quartz",
+      "chance": 0.17,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    },
+    {
+      "item": "minecraft:netherrack",
+      "chance": 0.21,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    }
+  ]
+}

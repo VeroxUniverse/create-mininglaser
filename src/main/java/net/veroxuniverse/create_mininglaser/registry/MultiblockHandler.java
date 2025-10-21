@@ -20,6 +20,12 @@ public class MultiblockHandler {
     private record PV(BlockPos offset, DrillCasingVariant variant) {}
 
     public static boolean tryFormDrill(Level level, BlockPos controllerPos, BlockState controllerState, Player player) {
+        if (controllerState.getBlock() instanceof LaserDrillControllerBlock
+                && controllerState.hasProperty(LaserDrillControllerBlock.ACTIVE)
+                && controllerState.getValue(LaserDrillControllerBlock.ACTIVE)) {
+            return false;
+        }
+
         Direction sideDir = null;
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos check = controllerPos.relative(dir);
@@ -35,7 +41,6 @@ public class MultiblockHandler {
         Direction rightDir   = sideDir;
 
         List<PV> layout = buildLayout(forwardDir, rightDir);
-
         BlockPos hatchOffset = new BlockPos(rightDir.getStepX(), 0, rightDir.getStepZ());
 
         for (PV pv : layout) {
@@ -140,7 +145,7 @@ public class MultiblockHandler {
 
     public static void unformAtController(Level level, BlockPos controllerPos) {
         BlockState ctrlState = level.getBlockState(controllerPos);
-        unformAtController(level, controllerPos, ctrlState);
+        unformAtController(level, controllerPos, ctrlState, true);
     }
 
     public static void unformAtController(Level level, BlockPos controllerPos, BlockState ctrlState) {
@@ -149,6 +154,16 @@ public class MultiblockHandler {
 
     public static void unformAtController(Level level, BlockPos controllerPos, BlockState ctrlState, boolean updateControllerBlock) {
         if (!(ctrlState.getBlock() instanceof LaserDrillControllerBlock)) {
+            boolean anyOrientationHasCasing = false;
+            for (Direction fwd : new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST}) {
+                Direction rightDir = rotateCW(fwd);
+                List<PV> layout = buildLayout(fwd, rightDir);
+                if (isAnyCasingPresent(level, controllerPos, layout)) {
+                    anyOrientationHasCasing = true;
+                    break;
+                }
+            }
+            if (!anyOrientationHasCasing) return;
             for (Direction fwd : new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST}) {
                 Direction rightDir = rotateCW(fwd);
                 List<PV> layout = buildLayout(fwd, rightDir);
@@ -176,6 +191,13 @@ public class MultiblockHandler {
         if (sideDir != null) {
             Direction forwardDir = rotateCCW(sideDir);
             Direction rightDir   = sideDir;
+
+            if (updateControllerBlock) {
+                if (isStructureIntact(level, controllerPos, forwardDir, rightDir)) return;
+            } else {
+                if (!isStructureIntact(level, controllerPos, forwardDir, rightDir)) return;
+            }
+
             List<PV> layout = buildLayout(forwardDir, rightDir);
             for (PV pv : layout) {
                 BlockPos p = controllerPos.offset(pv.offset());
@@ -194,45 +216,175 @@ public class MultiblockHandler {
                 level.sendBlockUpdated(hatchPos, oldHatch, updated, 2);
             }
         } else {
-            for (Direction fwd : new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST}) {
-                Direction rightDir = rotateCW(fwd);
-                List<PV> layout = buildLayout(fwd, rightDir);
-                for (PV pv : layout) {
-                    BlockPos p = controllerPos.offset(pv.offset());
-                    BlockState old = level.getBlockState(p);
-                    if (old.getBlock() instanceof LaserDrillCasingBlock) {
-                        BlockState updated = old.setValue(LaserDrillCasingBlock.FORMED, false);
-                        level.setBlock(p, updated, 3);
-                        level.sendBlockUpdated(p, old, updated, 2);
-                    }
+            Direction forwardFromState = ctrlState.hasProperty(LaserDrillControllerBlock.HORIZONTAL_FACING)
+                    ? ctrlState.getValue(LaserDrillControllerBlock.HORIZONTAL_FACING) : null;
+            if (forwardFromState == null) return;
+
+            Direction rightDir = rotateCW(forwardFromState);
+
+            if (updateControllerBlock) {
+                if (isStructureIntact(level, controllerPos, forwardFromState, rightDir)) return;
+            } else {
+                if (!isStructureIntact(level, controllerPos, forwardFromState, rightDir)) return;
+            }
+
+            List<PV> layout = buildLayout(forwardFromState, rightDir);
+            for (PV pv : layout) {
+                BlockPos p = controllerPos.offset(pv.offset());
+                BlockState old = level.getBlockState(p);
+                if (old.getBlock() instanceof LaserDrillCasingBlock) {
+                    BlockState updated = old.setValue(LaserDrillCasingBlock.FORMED, false);
+                    level.setBlock(p, updated, 3);
+                    level.sendBlockUpdated(p, old, updated, 2);
                 }
             }
         }
 
         if (updateControllerBlock && ctrlState.getBlock() instanceof LaserDrillControllerBlock) {
-            BlockState updatedCtrl = ctrlState.setValue(LaserDrillControllerBlock.ACTIVE, false);
-            BlockEntity be = level.getBlockEntity(controllerPos);
-            if (be instanceof LaserDrillControllerBlockEntity drill) {
-                drill.ejectCoreUp();
+            boolean shouldDeactivate = true;
+
+            Direction checkSide = null;
+            for (Direction d : Direction.Plane.HORIZONTAL) {
+                if (level.getBlockState(controllerPos.relative(d)).getBlock() instanceof LaserDrillHatchBlock) {
+                    checkSide = d;
+                    break;
+                }
             }
-            level.setBlock(controllerPos, updatedCtrl, 3);
-            level.sendBlockUpdated(controllerPos, ctrlState, updatedCtrl, 2);
+            if (checkSide != null) {
+                Direction forwardDir = rotateCCW(checkSide);
+                Direction rightDir   = checkSide;
+                if (isStructureIntact(level, controllerPos, forwardDir, rightDir)) {
+                    shouldDeactivate = false;
+                }
+            } else {
+                Direction forwardFromState = ctrlState.hasProperty(LaserDrillControllerBlock.HORIZONTAL_FACING)
+                        ? ctrlState.getValue(LaserDrillControllerBlock.HORIZONTAL_FACING) : null;
+                if (forwardFromState != null) {
+                    Direction rightDir = rotateCW(forwardFromState);
+                    if (isStructureIntact(level, controllerPos, forwardFromState, rightDir)) {
+                        shouldDeactivate = false;
+                    }
+                }
+            }
+
+            if (shouldDeactivate) {
+                BlockState updatedCtrl = ctrlState.setValue(LaserDrillControllerBlock.ACTIVE, false);
+                BlockEntity be = level.getBlockEntity(controllerPos);
+                if (be instanceof LaserDrillControllerBlockEntity drill) {
+                    drill.ejectCoreUp();
+                }
+                level.setBlock(controllerPos, updatedCtrl, 3);
+                level.sendBlockUpdated(controllerPos, ctrlState, updatedCtrl, 2);
+            }
         }
     }
 
+    private static boolean isAnyCasingPresent(Level level, BlockPos controllerPos, List<PV> layout) {
+        for (PV pv : layout) {
+            BlockPos p = controllerPos.offset(pv.offset());
+            BlockState s = level.getBlockState(p);
+            if (s.getBlock() instanceof LaserDrillCasingBlock) return true;
+        }
+        return false;
+    }
 
-    public static void unformNear(Level level, BlockPos brokenPos) {
+    private static boolean isStructureIntact(Level level, BlockPos controllerPos, Direction forwardDir, Direction rightDir) {
+        List<PV> layout = buildLayout(forwardDir, rightDir);
+        for (PV pv : layout) {
+            BlockPos p = controllerPos.offset(pv.offset());
+            BlockState s = level.getBlockState(p);
+            if (!(s.getBlock() instanceof LaserDrillCasingBlock)) return false;
+        }
+        BlockPos hatchPos = controllerPos.relative(rightDir);
+        BlockState hs = level.getBlockState(hatchPos);
+        return (hs.getBlock() instanceof LaserDrillHatchBlock);
+    }
+
+    public static void unformNear(Level level, BlockPos brokenPos, BlockState oldState) {
+        BlockState brokenState = oldState != null ? oldState : level.getBlockState(brokenPos);
+        boolean isCasing = brokenState.getBlock() instanceof LaserDrillCasingBlock;
+        boolean isHatch  = brokenState.getBlock() instanceof LaserDrillHatchBlock;
+
+        if (!isCasing && !isHatch) return;
+
+        if (isCasing &&
+                brokenState.hasProperty(LaserDrillCasingBlock.FORMED) &&
+                !brokenState.getValue(LaserDrillCasingBlock.FORMED)) {
+            return;
+        }
+
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -2; dx <= 2; dx++) {
                 for (int dz = -2; dz <= 2; dz++) {
-                    BlockPos p = brokenPos.offset(dx, dy, dz);
-                    BlockState s = level.getBlockState(p);
-                    if (s.getBlock() instanceof LaserDrillControllerBlock) {
-                        unformAtController(level, p, s);
+                    BlockPos controller = brokenPos.offset(dx, dy, dz);
+                    BlockState s = level.getBlockState(controller);
+                    if (!(s.getBlock() instanceof LaserDrillControllerBlock)) continue;
+                    if (!s.hasProperty(LaserDrillControllerBlock.ACTIVE) || !s.getValue(LaserDrillControllerBlock.ACTIVE))
+                        continue;
+
+                    if (isHatch) {
+                        Direction side = null;
+                        for (Direction d : Direction.Plane.HORIZONTAL) {
+                            if (controller.relative(d).equals(brokenPos)) { side = d; break; }
+                        }
+                        if (side == null) continue;
+                        Direction fwd = rotateCCW(side);
+                        Direction right = side;
+                        List<PV> layout = buildLayout(fwd, right);
+                        for (PV pv : layout) {
+                            BlockPos p = controller.offset(pv.offset());
+                            BlockState old = level.getBlockState(p);
+                            if (old.getBlock() instanceof LaserDrillCasingBlock) {
+                                BlockState updated = old.setValue(LaserDrillCasingBlock.FORMED, false);
+                                level.setBlock(p, updated, 3);
+                                level.sendBlockUpdated(p, old, updated, 2);
+                            }
+                        }
+                        BlockState ctrlSt = level.getBlockState(controller);
+                        if (ctrlSt.getBlock() instanceof LaserDrillControllerBlock) {
+                            BlockState updatedCtrl = ctrlSt.setValue(LaserDrillControllerBlock.ACTIVE, false);
+                            BlockEntity be = level.getBlockEntity(controller);
+                            if (be instanceof LaserDrillControllerBlockEntity drill) {
+                                drill.ejectCoreUp();
+                            }
+                            level.setBlock(controller, updatedCtrl, 3);
+                            level.sendBlockUpdated(controller, ctrlSt, updatedCtrl, 2);
+                        }
+                        return;
+                    }
+
+                    Direction sideDir = null;
+                    for (Direction dir : Direction.Plane.HORIZONTAL) {
+                        if (level.getBlockState(controller.relative(dir)).getBlock() instanceof LaserDrillHatchBlock) {
+                            sideDir = dir;
+                            break;
+                        }
+                    }
+                    if (sideDir == null) continue;
+
+                    Direction forward = rotateCCW(sideDir);
+                    Direction right   = sideDir;
+
+                    var layout = buildLayout(forward, right);
+                    boolean isMember = false;
+                    for (var pv : layout) {
+                        BlockPos member = controller.offset(pv.offset());
+                        if (member.equals(brokenPos)) { isMember = true; break; }
+                    }
+                    BlockPos hatchPos = controller.relative(right);
+                    if (hatchPos.equals(brokenPos)) isMember = true;
+
+                    if (isMember) {
+                        unformAtController(level, controller, s, true);
                         return;
                     }
                 }
             }
         }
     }
+
+    public static void unformNear(Level level, BlockPos brokenPos) {
+        unformNear(level, brokenPos, null);
+    }
+
 }

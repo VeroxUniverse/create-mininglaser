@@ -1,0 +1,107 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "tier": "create_mininglaser:t1",
+  "duration": 600,
+  "drops": [
+    {
+      "item": "minecraft:raw_iron",
+      "chance": 0.17,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:raw_copper",
+      "chance": 0.21,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:coal",
+      "chance": 0.21,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:flint",
+      "chance": 0.27,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:clay_ball",
+      "chance": 0.19,
+      "min": 1,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "chance": 0.12,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:cobblestone",
+      "chance": 0.30,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:andesite",
+      "chance": 0.30,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:diorite",
+      "chance": 0.30,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "minecraft:granite",
+      "chance": 0.30,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}

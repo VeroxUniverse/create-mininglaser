@@ -1,0 +1,88 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "thermal" }],
+  "tier": "create_mininglaser:t5",
+  "duration": 400,
+  "drops": [
+    {
+      "item": "thermal:raw_tin",
+      "chance": 0.23,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:raw_nickel",
+      "chance": 0.25,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:raw_lead",
+      "chance": 0.23,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:raw_silver",
+      "chance": 0.21,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:sulfur",
+      "chance": 0.09,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:niter",
+      "chance": 0.09,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:cinnabar",
+      "chance": 0.09,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "thermal:apatite",
+      "chance": 0.09,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}

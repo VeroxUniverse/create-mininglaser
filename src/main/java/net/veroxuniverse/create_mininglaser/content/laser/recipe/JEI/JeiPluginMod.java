@@ -25,8 +25,20 @@ public class JeiPluginMod implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration reg) {
         var gh = reg.getJeiHelpers().getGuiHelper();
+
+        final int COLS      = 5;
+        final int SLOT      = 18;
+        final int START_X   = 60;
+        final int START_Y   = 20;
+        final int ROWS_MAX  = 2;
+        final int PAD_RIGHT = 12;
+        final int PAD_BOTTOM= 22;
+
+        int width  = START_X + COLS * SLOT + PAD_RIGHT;
+        int height = START_Y + ROWS_MAX * SLOT + PAD_BOTTOM;
+
         reg.addRecipeCategories(new DrillCoreCategory(
-                gh.createBlankDrawable(150, 50),
+                gh.createBlankDrawable(width, height),
                 gh.createDrawableItemStack(new ItemStack(ModBlocks.LASER_DRILL.get()))
         ));
     }
@@ -42,7 +54,6 @@ public class JeiPluginMod implements IModPlugin {
         if (mc.level == null) return;
 
         RecipeManager manager = mc.level.getRecipeManager();
-
         Collection<Recipe<?>> all = manager.getRecipes();
 
         List<DrillCoreRecipe> recipes = all.stream()
@@ -52,5 +63,4 @@ public class JeiPluginMod implements IModPlugin {
 
         registry.addRecipes(DrillCoreJei.TYPE, recipes);
     }
-
 }

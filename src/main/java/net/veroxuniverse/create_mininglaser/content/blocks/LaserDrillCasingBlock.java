@@ -2,6 +2,7 @@ package net.veroxuniverse.create_mininglaser.content.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -38,9 +39,18 @@ public class LaserDrillCasingBlock extends Block {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
-            MultiblockHandler.unformNear(level, pos);
+            MultiblockHandler.unformNear(level, pos, state);
         }
         super.onRemove(state, level, pos, newState, isMoving);
     }
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide) {
+            MultiblockHandler.unformNear(level, pos, state);
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
 
 }

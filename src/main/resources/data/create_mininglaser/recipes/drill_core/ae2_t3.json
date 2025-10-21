@@ -1,0 +1,18 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "ae2" }],
+  "tier": "create_mininglaser:t3",
+  "duration": 400,
+  "drops": [
+    {
+      "item": "ae2:certus_quartz_crystal",
+      "chance": 0.17,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}

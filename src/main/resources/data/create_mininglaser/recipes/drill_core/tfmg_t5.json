@@ -1,0 +1,38 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "tfmg" }],
+  "tier": "create_mininglaser:t5",
+  "duration": 400,
+  "drops": [
+    {
+      "item": "tfmg:raw_lead",
+      "chance": 0.21,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "tfmg:raw_nickel",
+      "chance": 0.23,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "tfmg:raw_lithium",
+      "chance": 0.21,
+      "min": 1,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}

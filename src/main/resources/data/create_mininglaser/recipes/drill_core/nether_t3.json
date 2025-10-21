@@ -1,0 +1,47 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "tier": "create_mininglaser:t3",
+  "duration": 400,
+  "drops": [
+    {
+      "item": "minecraft:quartz",
+      "chance": 0.21,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    },
+    {
+      "item": "minecraft:gold_nugget",
+      "chance": 0.13,
+      "min": 1,
+      "max": 5,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    },
+    {
+      "item": "minecraft:netherrack",
+      "chance": 0.19,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    },
+    {
+      "item": "minecraft:sould_sand",
+      "chance": 0.15,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    }
+  ]
+}

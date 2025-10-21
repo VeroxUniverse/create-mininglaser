@@ -1,0 +1,116 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "ad_astra" }],
+  "tier": "create_mininglaser:t5",
+  "duration": 400,
+  "drops": [
+    {
+      "item": "ad_astra:ice_shard",
+      "chance": 0.05,
+      "min": 1,
+      "max": 6,
+      "env": {
+        "dimensions":
+        [
+          "ad_astra:moon",
+          "ad_astra:mars",
+          "ad_astra:glacio"
+        ]
+      }
+    },
+    {
+      "item": "ad_astra:raw_desh",
+      "chance": 0.19,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["ad_astra:moon"]
+      }
+    },
+    {
+      "item": "ad_astra:raw_ostrum",
+      "chance": 0.15,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["ad_astra:mars"]
+      }
+    },
+    {
+      "item": "ad_astra:raw_calorite",
+      "chance": 0.15,
+      "min": 1,
+      "max": 2,
+      "env": {
+        "dimensions": ["ad_astra:venus"]
+      }
+    },
+    {
+      "item": "minecraft:coal",
+      "chance": 0.27,
+      "min": 1,
+      "max": 4,
+      "env": {
+        "dimensions":
+        [
+          "ad_astra:venus",
+          "ad_astra:glacio"
+        ]
+      }
+    },
+    {
+      "item": "minecraft:raw_iron",
+      "chance": 0.25,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions":
+        [
+          "ad_astra:venus",
+          "ad_astra:glacio",
+          "ad_astra:mars",
+          "ad_astra:mercury"
+        ]
+      }
+    },
+    {
+      "item": "minecraft:raw_gold",
+      "chance": 0.19,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["ad_astra:venus"]
+      }
+    },
+    {
+      "item": "minecraft:diamond",
+      "chance": 0.13,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": [
+          "ad_astra:venus",
+          "ad_astra:mars"
+        ]
+      }
+    },
+    {
+      "item": "minecraft:raw_copper",
+      "chance": 0.29,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["ad_astra:glacio"]
+      }
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "chance": 0.23,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["ad_astra:glacio"]
+      }
+    }
+  ]
+}

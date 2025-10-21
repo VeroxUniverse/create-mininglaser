@@ -1,6 +1,7 @@
 package net.veroxuniverse.create_mininglaser;
 
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.api.stress.BlockStressValues;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.veroxuniverse.create_mininglaser.content.blocks.LaserDrillControllerBlockEntity;
 import net.veroxuniverse.create_mininglaser.content.items.TierRegistry;
 import net.veroxuniverse.create_mininglaser.content.laser.LaserDrillControllerRenderer;
 import net.veroxuniverse.create_mininglaser.registry.*;
@@ -35,6 +37,7 @@ public class CreateMininglaser {
         ModBlockEntities.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
+        ModItemsNoTab.register(modEventBus);
         ModTabs.register(modEventBus);
         ModPartials.init();
         ModConfigs.register();
@@ -48,6 +51,7 @@ public class CreateMininglaser {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("HELLO FROM COMMON SETUP");
+        event.enqueueWork(ModCreateCompat::init);
     }
 
     @SubscribeEvent

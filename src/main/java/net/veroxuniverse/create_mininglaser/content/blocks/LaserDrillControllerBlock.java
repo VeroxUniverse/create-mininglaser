@@ -1,11 +1,15 @@
 package net.veroxuniverse.create_mininglaser.content.blocks;
 
+import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
+import com.simibubi.create.content.kinetics.RotationPropagator;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.ticks.TickPriority;
 import net.veroxuniverse.create_mininglaser.content.items.TierDef;
 import net.veroxuniverse.create_mininglaser.content.items.TierDefs;
 import net.veroxuniverse.create_mininglaser.registry.ModBlockEntities;
@@ -32,18 +37,58 @@ import org.jetbrains.annotations.Nullable;
 public class LaserDrillControllerBlock extends HorizontalKineticBlock implements EntityBlock {
 
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    public static final BooleanProperty HAS_CORE = BooleanProperty.create("has_core");
 
     public LaserDrillControllerBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(HORIZONTAL_FACING, Direction.NORTH)
-                .setValue(ACTIVE, false));
+                .setValue(ACTIVE, false)
+                .setValue(HAS_CORE, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ACTIVE);
+        builder.add(HAS_CORE, ACTIVE);
+    }
+
+    public void detachKinetics(Level worldIn, BlockPos pos, boolean reAttachNextTick) {
+        BlockEntity be = worldIn.getBlockEntity(pos);
+        if (be instanceof KineticBlockEntity kbe) {
+            RotationPropagator.handleRemoved(worldIn, pos, kbe);
+            if (reAttachNextTick) {
+                worldIn.scheduleTick(pos, this, 2, TickPriority.EXTREMELY_HIGH);
+            }
+        }
+    }
+
+    /*
+
+    public void detachKinetics(Level worldIn, BlockPos pos, boolean reAttachNextTick) {
+        BlockEntity be = worldIn.getBlockEntity(pos);
+        if (be != null && be instanceof KineticBlockEntity) {
+            RotationPropagator.handleRemoved(worldIn, pos, (KineticBlockEntity)be);
+            if (reAttachNextTick) {
+                worldIn.scheduleTick(pos, this, 1, TickPriority.EXTREMELY_HIGH);
+            }
+
+        }
+    }
+
+    */
+
+
+    public void setHasCore(Level level, BlockPos pos, BlockState state, boolean hasCore) {
+        if (state.getValue(HAS_CORE) == hasCore) {
+            level.sendBlockUpdated(pos, state, state, 3);
+            return;
+        }
+
+        BlockState updated = state.setValue(HAS_CORE, hasCore);
+        level.setBlock(pos, updated, 18);
+
+        this.detachKinetics(level, pos, true);
     }
 
     @Override
@@ -53,13 +98,30 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
+            MultiblockHandler.unformAtController(level, pos, state, false);
+
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof LaserDrillControllerBlockEntity drill) {
-                drill.ejectCoreUp();
+                ItemStack core = drill.removeCore();
+                if (!core.isEmpty()) {
+                    net.minecraft.world.Containers.dropItemStack(
+                            level,
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            core
+                    );
+                }
             }
-            MultiblockHandler.unformAtController(level, pos, state, false);
         }
         super.onRemove(state, level, pos, newState, isMoving);
+    }
+
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide) {
+            MultiblockHandler.unformAtController(level, pos, state, false);
+        }
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -96,7 +158,7 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
                 return InteractionResult.SUCCESS;
             }
 
-            if (heldItem.is(Items.DIAMOND_SHOVEL) && !drill.getCore().isEmpty()) {
+            if (heldItem.getItem() instanceof ExtendoGripItem && !drill.getCore().isEmpty()) {
                 drill.ejectCoreUp();
                 player.displayClientMessage(Component.literal("§eCore removed"), true);
                 return InteractionResult.SUCCESS;
@@ -132,6 +194,10 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
 
                     com.simibubi.create.content.kinetics.base.KineticBlockEntity.switchToBlockState(level, pos, updated);
                     KineticBlockEntity.switchToBlockState(level, pos, updated);
+                    BlockEntity be2 = level.getBlockEntity(pos);
+                    if (be2 instanceof LaserDrillControllerBlockEntity drill2) {
+                        drill2.markStressDirty();
+                    }
                     level.sendBlockUpdated(pos, state, updated, 2);
 
                     player.displayClientMessage(Component.literal("§aMultiblock successfully built!"), true);
@@ -169,5 +235,30 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
             };
         }
     }
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof KineticBlockEntity kbe) {
+            RotationPropagator.handleAdded(level, pos, kbe);
+            kbe.setChanged();
+        }
+    }
+
+    /*
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof KineticBlockEntity kbe) {
+            RotationPropagator.handleAdded(level, pos, kbe);
+
+            kbe.updateSpeed = true;
+            kbe.networkDirty = true;
+            kbe.setChanged();
+        }
+    }
+
+     */
 
 }

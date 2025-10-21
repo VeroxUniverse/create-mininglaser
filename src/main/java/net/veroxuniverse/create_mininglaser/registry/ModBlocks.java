@@ -1,5 +1,6 @@
 package net.veroxuniverse.create_mininglaser.registry;
 
+import com.simibubi.create.api.stress.BlockStressValues;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -24,7 +25,6 @@ public class ModBlocks {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, CreateMininglaser.MODID);
 
-
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);
@@ -43,15 +43,20 @@ public class ModBlocks {
             () -> new LaserDrillHatchBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)
                     .strength(4f).requiresCorrectToolForDrops().noOcclusion()));
 
-    private static <T extends Block> RegistryObject<T> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
-        return BLOCKS.register(name, block);
-    }
-
     private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
         return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
+        BLOCK_ENTITIES.register(eventBus);
+    }
+
+    public static void registerStressValues() {
+        BlockStressValues.IMPACTS.register(
+                ModBlocks.LASER_DRILL.get(),
+                () -> 1.0
+        );
+        System.out.println("[CreateLaser] Stress impact registered for: " + ModBlocks.LASER_DRILL.getId());
     }
 }

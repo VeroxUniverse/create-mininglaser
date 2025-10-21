@@ -2,6 +2,7 @@ package net.veroxuniverse.create_mininglaser.content.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -13,6 +14,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.veroxuniverse.create_mininglaser.registry.MultiblockHandler;
 import org.jetbrains.annotations.Nullable;
+
+import static net.veroxuniverse.create_mininglaser.content.blocks.LaserDrillCasingBlock.FORMED;
 
 public class LaserDrillHatchBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
@@ -33,9 +36,17 @@ public class LaserDrillHatchBlock extends Block implements EntityBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
-            MultiblockHandler.unformNear(level, pos);
+            MultiblockHandler.unformNear(level, pos, state);
         }
         super.onRemove(state, level, pos, newState, isMoving);
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide) {
+            MultiblockHandler.unformNear(level, pos, state);
+        }
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Nullable

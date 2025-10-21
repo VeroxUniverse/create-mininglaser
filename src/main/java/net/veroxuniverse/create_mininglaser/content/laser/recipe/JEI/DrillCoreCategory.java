@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.veroxuniverse.create_mininglaser.content.items.TierDef;
@@ -23,7 +24,12 @@ import java.util.List;
 import java.util.Locale;
 
 public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
-    private static final ResourceLocation BG = new ResourceLocation("create_mininglaser", "textures/gui/jei/drill_core.png");
+
+    private static final int COLS     = 5;
+    private static final int SLOT     = 18;
+    private static final int START_X  = 60;
+    private static final int START_Y  = 20;
+
     private final IDrawable background;
     private final IDrawable icon;
 
@@ -66,15 +72,10 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         }
         String key = "dimension." + id.getNamespace() + "." + id.getPath();
         Component trans = Component.translatable(key);
-        String raw = trans.getString();
-        if (!raw.equals(key)) return trans;
+        if (!trans.getString().equals(key)) return trans;
 
-        String nice = id.getPath()
-                .replace('_', ' ')
-                .replace('/', ' ')
-                .replace('.', ' ')
-                .replace('-', ' ');
-        nice = titleCase(nice);
+        String nice = titleCase(id.getPath().replace('_', ' ')
+                .replace('/', ' ').replace('.', ' ').replace('-', ' '));
         if (!"minecraft".equals(id.getNamespace()))
             nice = id.getNamespace() + ": " + nice;
         return Component.literal(nice);
@@ -82,8 +83,7 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
 
     private static Component prettyBiome(ResourceLocation biomeId) {
         Component trans = Component.translatable("biome." + biomeId.getNamespace() + "." + biomeId.getPath());
-        String raw = trans.getString();
-        if (!raw.equals("biome." + biomeId.getNamespace() + "." + biomeId.getPath()))
+        if (!trans.getString().equals("biome." + biomeId.getNamespace() + "." + biomeId.getPath()))
             return trans;
 
         String nice = titleCase(biomeId.getPath().replace('_', ' '));
@@ -93,10 +93,7 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
     }
 
     private static Component prettyTag(ResourceLocation tagId) {
-        String nice = titleCase(tagId.getPath().replace('_', ' '));
-        if (!"minecraft".equals(tagId.getNamespace()))
-            return Component.literal("#" + tagId.getNamespace() + ":" + nice);
-        return Component.literal("#" + nice);
+        return Component.literal("#" + tagId.getNamespace() + ":" + tagId.getPath());
     }
 
     private static void addWrappedList(List<Component> tooltip, Component title, List<Component> lines, int limit) {
@@ -110,7 +107,8 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         }
         if (lines.size() > limit) {
             int more = lines.size() - limit;
-            tooltip.add(Component.literal("  … +" + more + " more").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            tooltip.add(Component.literal("  … +" + more + " more")
+                    .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
     }
 
@@ -130,30 +128,41 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         final TierDef def = r.getTierDef();
         if (def == null) return;
 
-        var coreItem = ForgeRegistries.ITEMS.getValue(def.coreItem);
-        var coreStack = coreItem != null ? new ItemStack(coreItem) : ItemStack.EMPTY;
+        Item coreItemObj = ForgeRegistries.ITEMS.getValue(def.coreItem);
+        ItemStack coreStack = coreItemObj != null ? new ItemStack(coreItemObj) : ItemStack.EMPTY;
 
         b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, 20, 20)
                 .addItemStack(coreStack)
                 .addTooltipCallback((view, tooltip) -> {
-                    double su128 = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
-                    tooltip.add(Component.literal("Stress @" + def.minRpm + " RPM: " + formatSU(su128) + " SU")
+                    double suAtMin = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
+                    tooltip.add(Component.literal("Stress @" + def.minRpm + " RPM: " + formatSU(suAtMin) + " SU")
                             .withStyle(ChatFormatting.WHITE));
                     tooltip.add(Component.literal("Min Speed: " + def.minRpm + " RPM")
                             .withStyle(ChatFormatting.GRAY));
                 });
 
-        int x = 60;
-        int y = 20;
-        for (var drop : r.getDrops()) {
+        var drops = r.getDrops();
+        for (int i = 0; i < drops.size(); i++) {
+            int col = i % COLS;
+            int row = i / COLS;
+
+            int x = START_X + col * SLOT;
+            int y = START_Y + row * SLOT;
+
+            var drop = drops.get(i);
+            Item outItem = ForgeRegistries.ITEMS.getValue(drop.item());
+            if (outItem == null) continue;
+            ItemStack outStack = new ItemStack(outItem);
+
             b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT, x, y)
-                    .addItemStack(new ItemStack(ForgeRegistries.ITEMS.getValue(drop.item())))
+                    .addItemStack(outStack)
                     .addTooltipCallback((view, tooltip) -> {
                         tooltip.add(Component.literal("Chance: " + formatChance(drop.chance()))
                                 .withStyle(ChatFormatting.WHITE));
-                        if (drop.min() != drop.max())
+                        if (drop.min() != drop.max()) {
                             tooltip.add(Component.literal("Amount: " + drop.min() + "–" + drop.max())
                                     .withStyle(ChatFormatting.WHITE));
+                        }
 
                         var f = drop.filter();
                         if (f != null && !f.isEmpty()) {
@@ -174,7 +183,6 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
                             }
                         }
                     });
-            x += 20;
         }
     }
 
@@ -185,14 +193,13 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         final TierDef def = r.getTierDef();
         if (def == null) return;
 
-        double su128 = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
+        double suAtMin = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
         String timeText = String.format(Locale.US, "%.1f s", r.getDurationTicks() / 20.0);
-        String suText   = formatSU(su128) + " SU";
+        String suText   = formatSU(suAtMin) + " SU";
         String rpmText  = "≥" + def.minRpm + " RPM";
 
-        int topY = 6;
-        g.drawString(font, timeText, 8,  topY, 0xFFFFFF, false);
-        g.drawString(font, suText,   80, topY, 0xFFFFFF, false);
+        g.drawString(font, timeText, 8, 6, 0xFFFFFF, false);
+        g.drawString(font, suText,   80, 6, 0xFFFFFF, false);
 
         int inputX = 20, inputY = 20;
         int rpmX = inputX + 9 - font.width(rpmText) / 2;

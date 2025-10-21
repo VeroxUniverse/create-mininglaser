@@ -1,0 +1,28 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "mekanism" }],
+  "tier": "create_mininglaser:t3",
+  "duration": 400,
+  "drops": [
+    {
+      "item": "mekanism:raw_tin",
+      "chance": 0.23,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "mekanism:raw_osmium",
+      "chance": 0.21,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}
