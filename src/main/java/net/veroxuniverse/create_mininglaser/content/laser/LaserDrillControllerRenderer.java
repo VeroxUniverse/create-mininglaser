@@ -110,25 +110,23 @@ public class LaserDrillControllerRenderer extends KineticBlockEntityRenderer<Las
         return Math.min(len, hardCap);
     }
 
-    private static void renderBeam(VertexConsumer vC, PoseStack pose, float cx, float cy, float cz, int color, float length, float width) {
+    private static void renderBeam(VertexConsumer consumer, PoseStack pose, float cx, float cy, float cz, int color, float length, float width) {
         for (int i = 0; i < 4; i++) {
             pose.pushPose();
             pose.mulPose(Axis.YP.rotationDegrees(90f * i));
             pose.pushPose();
             pose.translate(-width / 2f, 0f, -width / 2f);
-            renderQuad(vC, pose, cx, cy, cz, color, length, width);
+            renderQuad(consumer, pose, cx, cy, cz, color, length, width);
             pose.popPose();
             pose.popPose();
         }
     }
 
-    private static void renderQuad(VertexConsumer vC, PoseStack pose,
-                                   float x, float y, float z,
-                                   int color, float length, float width) {
+    private static void renderQuad(VertexConsumer consumer, PoseStack pose, float x, float y, float z, int color, float length, float width) {
         var last = pose.last();
 
         // Top-Left
-        vC.vertex(last.pose(), x, y, z)
+        consumer.vertex(last.pose(), x, y, z)
                 .color(color)
                 .uv(0f, 0f)
                 .overlayCoords(0, 10)
@@ -137,7 +135,7 @@ public class LaserDrillControllerRenderer extends KineticBlockEntityRenderer<Las
                 .endVertex();
 
         // Top-Right
-        vC.vertex(last.pose(), x + width, y, z)
+        consumer.vertex(last.pose(), x + width, y, z)
                 .color(color)
                 .uv(1f, 0f)
                 .overlayCoords(0, 10)
@@ -146,7 +144,7 @@ public class LaserDrillControllerRenderer extends KineticBlockEntityRenderer<Las
                 .endVertex();
 
         // Bottom-Right
-        vC.vertex(last.pose(), x + width, y - length, z)
+        consumer.vertex(last.pose(), x + width, y - length, z)
                 .color(color)
                 .uv(1f, 1f)
                 .overlayCoords(0, 10)
@@ -155,7 +153,7 @@ public class LaserDrillControllerRenderer extends KineticBlockEntityRenderer<Las
                 .endVertex();
 
         // Bottom-Left
-        vC.vertex(last.pose(), x, y - length, z)
+        consumer.vertex(last.pose(), x, y - length, z)
                 .color(color)
                 .uv(0f, 1f)
                 .overlayCoords(0, 10)
