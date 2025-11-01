@@ -78,7 +78,6 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
 
     */
 
-
     public void setHasCore(Level level, BlockPos pos, BlockState state, boolean hasCore) {
         if (state.getValue(HAS_CORE) == hasCore) {
             level.sendBlockUpdated(pos, state, state, 3);

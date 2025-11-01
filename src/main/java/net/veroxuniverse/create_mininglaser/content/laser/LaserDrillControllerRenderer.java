@@ -110,9 +110,7 @@ public class LaserDrillControllerRenderer extends KineticBlockEntityRenderer<Las
         return Math.min(len, hardCap);
     }
 
-    private static void renderBeam(VertexConsumer vC, PoseStack pose,
-                                   float cx, float cy, float cz,
-                                   int color, float length, float width) {
+    private static void renderBeam(VertexConsumer vC, PoseStack pose, float cx, float cy, float cz, int color, float length, float width) {
         for (int i = 0; i < 4; i++) {
             pose.pushPose();
             pose.mulPose(Axis.YP.rotationDegrees(90f * i));
