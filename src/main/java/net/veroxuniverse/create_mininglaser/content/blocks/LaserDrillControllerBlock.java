@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -140,35 +142,35 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!level.isClientSide) {
-            ItemStack heldItem = player.getItemInHand(hand);
-            BlockEntity be = level.getBlockEntity(pos);
-            if (!(be instanceof LaserDrillControllerBlockEntity drill)) return InteractionResult.PASS;
+        if (level.isClientSide)
+            return InteractionResult.PASS;
 
-            TierDef def = TierDefs.byCoreItem(heldItem.getItem());
-            if (def != null && drill.getCore().isEmpty()) {
-                if (!state.getValue(LaserDrillControllerBlock.ACTIVE)) {
-                    player.displayClientMessage(Component.literal("§cController is not active."), true);
-                    return InteractionResult.SUCCESS;
-                }
-                ItemStack one = heldItem.split(1);
-                drill.setCore(one);
-                player.displayClientMessage(Component.literal("§aCore inserted"), true);
+        ItemStack heldItem = player.getItemInHand(hand);
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof LaserDrillControllerBlockEntity drill))
+            return InteractionResult.PASS;
+
+        TierDef def = TierDefs.byCoreItem(heldItem.getItem());
+        if (def != null && drill.getCore().isEmpty()) {
+            if (!state.getValue(LaserDrillControllerBlock.ACTIVE)) {
+                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.VILLAGER_NO, SoundSource.BLOCKS, 0.8f, 1.0f);
                 return InteractionResult.SUCCESS;
             }
+            ItemStack one = heldItem.split(1);
+            drill.setCore(one);
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.8f, 1.1f);
+            return InteractionResult.SUCCESS;
+        }
 
-            if (heldItem.getItem() instanceof ExtendoGripItem && !drill.getCore().isEmpty()) {
+        if (heldItem.getItem() instanceof WrenchItem) {
+
+            if (!drill.getCore().isEmpty()) {
                 drill.ejectCoreUp();
-                player.displayClientMessage(Component.literal("§eCore removed"), true);
+                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 0.8f, 0.9f);
                 return InteractionResult.SUCCESS;
             }
 
-            if (heldItem.getItem() instanceof WrenchItem) {
-
-                if (state.getValue(LaserDrillControllerBlock.ACTIVE)) {
-                    player.displayClientMessage(Component.literal("§eMultiblock is already active!"), true);
-                    return InteractionResult.SUCCESS;
-                }
+            if (!state.getValue(LaserDrillControllerBlock.ACTIVE)) {
 
                 Direction hatchDir = null;
                 for (Direction dir : Direction.Plane.HORIZONTAL) {
@@ -193,21 +195,28 @@ public class LaserDrillControllerBlock extends HorizontalKineticBlock implements
 
                     com.simibubi.create.content.kinetics.base.KineticBlockEntity.switchToBlockState(level, pos, updated);
                     KineticBlockEntity.switchToBlockState(level, pos, updated);
+
                     BlockEntity be2 = level.getBlockEntity(pos);
                     if (be2 instanceof LaserDrillControllerBlockEntity drill2) {
                         drill2.markStressDirty();
                     }
+
                     level.sendBlockUpdated(pos, state, updated, 2);
 
-                    player.displayClientMessage(Component.literal("§aMultiblock successfully built!"), true);
+                    level.playSound(null, pos, net.minecraft.sounds.SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 0.9f, 1.0f);
                 } else {
-                    player.displayClientMessage(Component.literal("§cInvalid structure!"), true);
+                    level.playSound(null, pos, net.minecraft.sounds.SoundEvents.DISPENSER_FAIL, SoundSource.BLOCKS, 0.8f, 0.8f);
                 }
                 return InteractionResult.SUCCESS;
             }
+
+            level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.UI_BUTTON_CLICK.get(), SoundSource.BLOCKS, 0.4f, 1.0f);
+            return InteractionResult.SUCCESS;
         }
+
         return InteractionResult.PASS;
     }
+
 
     @Nullable
     @Override

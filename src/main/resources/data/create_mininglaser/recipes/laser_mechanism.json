@@ -1,0 +1,34 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": { "item": "create:sturdy_sheet" },
+  "transitionalItem": { "item": "create_mininglaser:incomplete_laser_mechanism" },
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        { "item": "create_mininglaser:incomplete_laser_mechanism" },
+        { "item": "create:polished_rose_quartz" }
+      ],
+      "results": [{ "item": "create_mininglaser:incomplete_laser_mechanism" }]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        { "item": "create_mininglaser:incomplete_laser_mechanism" },
+        { "item": "create:cogwheel" }
+      ],
+      "results": [{ "item": "create_mininglaser:incomplete_laser_mechanism" }]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [{ "item": "create_mininglaser:incomplete_laser_mechanism" }],
+      "results": [{ "item": "create_mininglaser:incomplete_laser_mechanism" }]
+    }
+  ],
+  "loops": 7,
+  "results": [
+    { "item": "create_mininglaser:laser_mechanism", "chance": 0.90 },
+    { "item": "create:sturdy_sheet", "chance": 0.08 },
+    { "item": "create:cogwheel", "chance": 0.02 }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BSB",
+    "SCS",
+    "BSB"
+  ],
+  "key": {
+    "B": { "item": "create:brass_ingot" },
+    "S": { "item": "create:sturdy_sheet" },
+    "C": { "item": "create:brass_casing" }
+  },
+  "result": { "item": "create_mininglaser:drill_casing", "count": 1 }
+}

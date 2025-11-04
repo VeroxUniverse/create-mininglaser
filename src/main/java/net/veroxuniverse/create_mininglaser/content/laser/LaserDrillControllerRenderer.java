@@ -75,7 +75,7 @@ public class LaserDrillControllerRenderer extends KineticBlockEntityRenderer<Las
         float f = (float) Math.floorMod(gameTime, 40) + pt;
 
         ms.pushPose();
-        ms.translate(0.5f, 0f, 0.5f);
+        ms.translate(0.5f, -1.0f, 0.5f);
         ms.mulPose(Axis.YP.rotationDegrees(f * 2.25f - 45f));
 
         VertexConsumer vc = buffers.getBuffer(RenderType.gui());

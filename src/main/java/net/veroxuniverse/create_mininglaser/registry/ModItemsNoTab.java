@@ -15,6 +15,9 @@ public class ModItemsNoTab {
     public static final RegistryObject<Item> INCOMPLETE_LASER_MECHANISM = ITEMS.register("incomplete_laser_mechanism",
             () -> new Item(new Item.Properties().stacksTo(1)));
 
+    public static final RegistryObject<Item> INCOMPLETE_CORE_FRAME = ITEMS.register("incomplete_core_frame",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

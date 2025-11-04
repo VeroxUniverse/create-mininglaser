@@ -10,25 +10,44 @@
 
   "adv.create_mininglaser.root.title": "Create Mining Laser's",
   "adv.create_mininglaser.root.desc": "Harness the power of focused light!",
-
   "adv.create_mininglaser.laser_drill.title": "Laser Drill",
   "adv.create_mininglaser.laser_drill.desc": "Assemble or obtain the Laser Drill.",
-
   "adv.create_mininglaser.core_t1.title": "Tier 1 Core",
   "adv.create_mininglaser.core_t1.desc": "Obtain a Tier 1 drill core.",
-
   "adv.create_mininglaser.core_t2.title": "Tier 2 Core",
   "adv.create_mininglaser.core_t2.desc": "Obtain a Tier 2 drill core.",
-
   "adv.create_mininglaser.core_t3.title": "Tier 3 Core",
   "adv.create_mininglaser.core_t3.desc": "Obtain a Tier 3 drill core.",
-
   "adv.create_mininglaser.core_t4.title": "Tier 4 Core",
   "adv.create_mininglaser.core_t4.desc": "Obtain a Tier 4 drill core.",
-
   "adv.create_mininglaser.core_t5.title": "Tier 5 Core",
   "adv.create_mininglaser.core_t5.desc": "Obtain a Tier 5 drill core.",
-
   "adv.create_mininglaser.laser_touch.title": "Ouch!",
-  "adv.create_mininglaser.laser_touch.desc": "Get in contact with the mining laser beam."
+  "adv.create_mininglaser.laser_touch.desc": "Get in contact with the mining laser beam.",
+
+  "config.jade.plugin_create_mininglaser.laser_drill_core": "Laser Drill: Core",
+  "config.jade.plugin_create_mininglaser.laser_drill_core.desc": "Show the core and tier in the overlay.",
+
+  "itemGroup.create_mininglaser": "Create Mining Laser",
+
+  "item.create_mininglaser.drill_core_t1": "Laser Drill Head T1",
+  "item.create_mininglaser.drill_core_t2": "Laser Drill Head T2",
+  "item.create_mininglaser.drill_core_t3": "Laser Drill Head T3",
+  "item.create_mininglaser.drill_core_t4": "Laser Drill Head T4",
+  "item.create_mininglaser.drill_core_t5": "Laser Drill Head T5",
+
+  "item.create_mininglaser.crystal_t2": "Fluxite Crystal",
+  "item.create_mininglaser.crystal_t3": "Synthite Crystal",
+  "item.create_mininglaser.crystal_t4": "Neurophase Crystal",
+  "item.create_mininglaser.crystal_t5": "Ionix Crystal",
+  "item.create_mininglaser.crystal_t6": "Quantium Crystal",
+
+  "item.create_mininglaser.laser_mechanism": "Laser Mechanism",
+  "item.create_mininglaser.incomplete_laser_mechanism": "Incomplete Laser Mechanism",
+
+  "item.create_mininglaser.incomplete_core_frame": "Incomplete Laser Drill Head",
+
+  "block.create_mininglaser.laser_drill": "Laser Drill",
+  "block.create_mininglaser.drill_casing": "Drill Casing",
+  "block.create_mininglaser.drill_hatch": "Drill Hatch"
 }

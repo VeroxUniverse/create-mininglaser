@@ -1,0 +1,44 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": { "item": "create_mininglaser:laser_mechanism" },
+  "transitionalItem": { "item": "create_mininglaser:incomplete_core_frame" },
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        { "item": "create_mininglaser:incomplete_core_frame" },
+        { "item": "create:rose_quartz" }
+      ],
+      "results": [{ "item": "create_mininglaser:incomplete_core_frame" }]
+    },
+    {
+      "type": "create:cutting",
+      "ingredients": [{ "item": "create_mininglaser:incomplete_core_frame" }],
+      "results": [{ "item": "create_mininglaser:incomplete_core_frame" }],
+      "processingTime": 50
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [{ "item": "create_mininglaser:incomplete_core_frame" }],
+      "results": [{ "item": "create_mininglaser:incomplete_core_frame" }]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        { "item": "create_mininglaser:incomplete_core_frame" },
+        { "item": "create:sturdy_sheet" }
+      ],
+      "results": [{ "item": "create_mininglaser:incomplete_core_frame" }]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [{ "item": "create_mininglaser:incomplete_core_frame" }],
+      "results": [{ "item": "create_mininglaser:incomplete_core_frame" }]
+    }
+  ],
+  "loops": 7,
+  "results": [
+    { "item": "create_mininglaser:drill_core_t1", "chance": 0.85 },
+    { "item": "create_mininglaser:laser_mechanism", "chance": 0.15 }
+  ]
+}

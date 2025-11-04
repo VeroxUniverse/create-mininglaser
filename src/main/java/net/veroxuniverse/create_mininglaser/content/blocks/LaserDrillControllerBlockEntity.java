@@ -1,9 +1,11 @@
 package net.veroxuniverse.create_mininglaser.content.blocks;
 
 import com.simibubi.create.Create;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.kinetics.RotationPropagator;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.core.BlockPos;
@@ -36,12 +38,13 @@ import net.veroxuniverse.create_mininglaser.registry.ModDamageTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import java.util.List;
+import net.minecraft.network.chat.Component;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 import static net.veroxuniverse.create_mininglaser.content.blocks.LaserDrillControllerBlock.ACTIVE;
-import static net.veroxuniverse.create_mininglaser.content.blocks.LaserDrillControllerBlock.HAS_CORE;
 
-public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
+public class LaserDrillControllerBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
 
     public static final float DEFAULT_MIN_RPM  = 128f;
     private static final float DEFAULT_MAX_RPM = 256f;
@@ -154,6 +157,12 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
         BlockState s = level.getBlockState(worldPosition);
         if (s.getBlock() instanceof LaserDrillControllerBlock b) {
             level.setBlock(worldPosition, s.setValue(LaserDrillControllerBlock.HAS_CORE, hasCore), 18);
+        }
+
+        if (!level.isClientSide && hasNetwork()) {
+            var net = getOrCreateNetwork();
+            net.updateStressFor(this, calculateStressApplied());
+            net.updateStress();
         }
 
         sendData();
@@ -527,4 +536,23 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity {
                 pos.getX() + 1 + pad, pos.getY() + 1, pos.getZ() + 1 + pad
         );
     }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+
+        ItemStack core = getCore();
+        if (core.isEmpty()) {
+            tooltip.add(Component.literal("    ❌ No Core inserted").withStyle(ChatFormatting.GRAY));
+            return true;
+        }
+
+        tooltip.add(Component.literal("    ⚙ Core: ")
+                .withStyle(ChatFormatting.GRAY)
+                .append(core.getHoverName().copy().withStyle(ChatFormatting.AQUA)));
+
+
+        return true;
+    }
+
 }

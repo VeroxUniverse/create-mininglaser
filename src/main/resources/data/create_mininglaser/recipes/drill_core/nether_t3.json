@@ -34,8 +34,18 @@
       }
     },
     {
-      "item": "minecraft:sould_sand",
+      "item": "minecraft:soul_sand",
       "chance": 0.15,
+      "min": 1,
+      "max": 1,
+      "env": {
+        "dimensions": ["minecraft:the_nether"],
+        "biomes": ["#minecraft:is_nether"]
+      }
+    },
+    {
+      "item": "create_mininglaser:crystal_t4",
+      "chance": 0.0225,
       "min": 1,
       "max": 1,
       "env": {

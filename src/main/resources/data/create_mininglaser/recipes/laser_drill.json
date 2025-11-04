@@ -1,0 +1,14 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    "CCC",
+    "CMC",
+    "C1C"
+  ],
+  "key": {
+    "C": { "item": "create_mininglaser:drill_casing" },
+    "M": { "item": "create_mininglaser:laser_mechanism" },
+    "1": { "item": "create:electron_tube" }
+  },
+  "result": { "item": "create_mininglaser:laser_drill" }
+}
