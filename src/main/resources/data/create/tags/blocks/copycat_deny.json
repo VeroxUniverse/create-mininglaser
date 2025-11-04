@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "create_mininglaser:laser_drill",
+    "create_mininglaser:drill_casing",
+    "create_mininglaser:drill_hatch"
+  ]
+}
