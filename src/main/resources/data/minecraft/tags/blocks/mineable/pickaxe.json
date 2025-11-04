@@ -1,0 +1,7 @@
+{
+  "values": [
+    "create_mininglaser:laser_drill",
+    "create_mininglaser:drill_hatch",
+    "create_mininglaser:drill_casing"
+  ]
+}

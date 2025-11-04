@@ -49,5 +49,9 @@
 
   "block.create_mininglaser.laser_drill": "Laser Drill",
   "block.create_mininglaser.drill_casing": "Drill Casing",
-  "block.create_mininglaser.drill_hatch": "Drill Hatch"
+  "block.create_mininglaser.drill_hatch": "Drill Hatch",
+
+  "ponder.create_mininglaser.laser_multiblock": "Building the Laser Drill Multiblock",
+  "ponder.create_mininglaser.insert_core": "Inserting and Removing Drill Cores",
+  "ponder.create_mininglaser.output_setup": "Connecting the Output Hatch"
 }
