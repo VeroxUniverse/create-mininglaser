@@ -22,7 +22,7 @@ public class MiningLaserPonderPlugin implements PonderPlugin {
 
     @Override
     public String getModId() {
-        return CreateMininglaser.MODID;
+        return "create_mininglaser";
     }
 
     @Override
@@ -33,9 +33,9 @@ public class MiningLaserPonderPlugin implements PonderPlugin {
                         : null);
 
         H.forComponents(ModBlocks.LASER_DRILL.get()) // Block, mapped to RL by withKeyFunction
-                .addStoryBoard("mininglaser/laser_multiblock", MiningLaserPonderScenes::laserMultiblock)
-                .addStoryBoard("mininglaser/insert_core",      MiningLaserPonderScenes::insertCore)
-                .addStoryBoard("mininglaser/output_setup",     MiningLaserPonderScenes::outputSetup);
+                .addStoryBoard("laser_multiblock", MiningLaserPonderScenes::laserMultiblock)
+                .addStoryBoard("insert_core",      MiningLaserPonderScenes::insertCore)
+                .addStoryBoard("output_setup",     MiningLaserPonderScenes::outputSetup);
     }
 
     @Override public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {}

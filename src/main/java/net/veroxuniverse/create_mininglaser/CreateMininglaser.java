@@ -1,6 +1,7 @@
 package net.veroxuniverse.create_mininglaser;
 
 import com.mojang.logging.LogUtils;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.veroxuniverse.create_mininglaser.content.items.TierRegistry;
 import net.veroxuniverse.create_mininglaser.content.laser.LaserDrillControllerRenderer;
+import net.veroxuniverse.create_mininglaser.ponder.MiningLaserPonderPlugin;
 import net.veroxuniverse.create_mininglaser.registry.*;
 import org.slf4j.Logger;
 
@@ -69,6 +71,8 @@ public class CreateMininglaser {
                         LaserDrillControllerRenderer::new
                 );
                 ModPartials.init();
+
+                PonderIndex.addPlugin(new MiningLaserPonderPlugin());
 
             });
         }

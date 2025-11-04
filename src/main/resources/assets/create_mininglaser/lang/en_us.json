@@ -51,7 +51,17 @@
   "block.create_mininglaser.drill_casing": "Drill Casing",
   "block.create_mininglaser.drill_hatch": "Drill Hatch",
 
-  "ponder.create_mininglaser.laser_multiblock": "Building the Laser Drill Multiblock",
-  "ponder.create_mininglaser.insert_core": "Inserting and Removing Drill Cores",
-  "ponder.create_mininglaser.output_setup": "Connecting the Output Hatch"
+  "create_mininglaser.ponder.laser_multiblock.header": "Building the Laser Drill Multiblock",
+  "create_mininglaser.ponder.laser_multiblock.text_1": "Place the first layer of Drill Casings.",
+  "create_mininglaser.ponder.laser_multiblock.text_2": "Place the Controller here.",
+  "create_mininglaser.ponder.laser_multiblock.text_3": "Place the Hatch on the side for item output.",
+  "create_mininglaser.ponder.laser_multiblock.text_4": "Use a Wrench on the Controller to form the multiblock.",
+
+  "create_mininglaser.ponder.insert_core.header": "Inserting and Removing Drill Cores",
+  "create_mininglaser.ponder.insert_core.text_1": "Right-click the Controller with a Drill Core to insert it.",
+  "create_mininglaser.ponder.insert_core.text_2": "Right-click with a Wrench to remove the Core.",
+
+  "create_mininglaser.ponder.output_setup.header": "Connecting the Output Hatch",
+  "create_mininglaser.ponder.output_setup.text_1": "Items are output via the Hatch.",
+  "create_mininglaser.ponder.output_setup.text_2": "Attach a funnel here to collect items."
 }
