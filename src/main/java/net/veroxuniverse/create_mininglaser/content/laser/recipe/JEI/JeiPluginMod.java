@@ -2,12 +2,14 @@ package net.veroxuniverse.create_mininglaser.content.laser.recipe.JEI;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.veroxuniverse.create_mininglaser.CreateMininglaser;
 import net.veroxuniverse.create_mininglaser.content.laser.recipe.DrillCoreRecipe;
 import net.veroxuniverse.create_mininglaser.registry.ModBlocks;
 import net.veroxuniverse.create_mininglaser.registry.ModRecipes;
@@ -26,19 +28,15 @@ public class JeiPluginMod implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration reg) {
         var gh = reg.getJeiHelpers().getGuiHelper();
 
-        final int COLS      = 5;
-        final int SLOT      = 18;
-        final int START_X   = 60;
-        final int START_Y   = 20;
-        final int ROWS_MAX  = 2;
-        final int PAD_RIGHT = 12;
-        final int PAD_BOTTOM= 22;
+        ResourceLocation BG_TEX = new ResourceLocation(
+                CreateMininglaser.MODID,
+                "textures/gui/jei/laser_drill_backround.png"
+        );
 
-        int width  = START_X + COLS * SLOT + PAD_RIGHT;
-        int height = START_Y + ROWS_MAX * SLOT + PAD_BOTTOM;
+        IDrawable background = gh.drawableBuilder(BG_TEX, 0, 0, 180, 100).build();
 
         reg.addRecipeCategories(new DrillCoreCategory(
-                gh.createBlankDrawable(width, height),
+                background,
                 gh.createDrawableItemStack(new ItemStack(ModBlocks.LASER_DRILL.get()))
         ));
     }

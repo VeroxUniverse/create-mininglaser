@@ -2,7 +2,7 @@
   "type": "create_mininglaser:drill_core",
   "conditions": [{ "type": "forge:mod_loaded", "modid": "ae2" }],
   "tier": "create_mininglaser:t5",
-  "duration": 400,
+  "duration": 300,
   "drops": [
     {
       "item": "ae2:certus_quartz_crystal",

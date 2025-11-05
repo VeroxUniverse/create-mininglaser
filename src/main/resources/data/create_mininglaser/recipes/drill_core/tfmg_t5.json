@@ -2,7 +2,7 @@
   "type": "create_mininglaser:drill_core",
   "conditions": [{ "type": "forge:mod_loaded", "modid": "tfmg" }],
   "tier": "create_mininglaser:t5",
-  "duration": 400,
+  "duration": 300,
   "drops": [
     {
       "item": "tfmg:raw_lead",

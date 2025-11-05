@@ -411,10 +411,11 @@ public class LaserDrillControllerBlockEntity extends KineticBlockEntity implemen
                 e -> !e.isSpectator() && e.isAlive());
 
         if (!victims.isEmpty()) {
-            float dmg = 2.0f;
+            float dmg = 5.0f;
             var dmgType = ModDamageTypes.laser(level);
             for (var le : victims) {
                 le.hurt(dmgType, dmg);
+                le.setSecondsOnFire(5);
                 if (le instanceof net.minecraft.server.level.ServerPlayer sp) {
                     ModAdvancements.awardTouchedLaser(sp);
                 }

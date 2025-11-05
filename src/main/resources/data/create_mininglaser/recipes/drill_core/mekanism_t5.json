@@ -2,7 +2,7 @@
   "type": "create_mininglaser:drill_core",
   "conditions": [{ "type": "forge:mod_loaded", "modid": "mekanism" }],
   "tier": "create_mininglaser:t4",
-  "duration": 400,
+  "duration": 300,
   "drops": [
     {
       "item": "mekanism:raw_tin",

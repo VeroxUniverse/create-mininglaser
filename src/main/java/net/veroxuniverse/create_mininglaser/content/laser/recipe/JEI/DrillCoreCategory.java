@@ -27,8 +27,8 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
 
     private static final int COLS     = 5;
     private static final int SLOT     = 18;
-    private static final int START_X  = 60;
-    private static final int START_Y  = 20;
+    private static final int START_X  = 71;
+    private static final int START_Y  = 21;
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -131,7 +131,7 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
         Item coreItemObj = ForgeRegistries.ITEMS.getValue(def.coreItem);
         ItemStack coreStack = coreItemObj != null ? new ItemStack(coreItemObj) : ItemStack.EMPTY;
 
-        b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, 20, 20)
+        b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, 31, 21)
                 .addItemStack(coreStack)
                 .addTooltipCallback((view, tooltip) -> {
                     double suAtMin = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
