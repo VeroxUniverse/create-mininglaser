@@ -1,0 +1,28 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "createnuclear" }],
+  "tier": "create_mininglaser:t5",
+  "duration": 300,
+  "drops": [
+    {
+      "item": "createnuclear:raw_lead",
+      "chance": 0.21,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "createnuclear:raw_uranium",
+      "chance": 0.17,
+      "min": 1,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}

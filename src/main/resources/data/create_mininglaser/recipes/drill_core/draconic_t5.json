@@ -1,0 +1,18 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "draconicevolution" }],
+  "tier": "create_mininglaser:t5",
+  "duration": 300,
+  "drops": [
+    {
+      "item": "draconicevolution:draconium_dust",
+      "chance": 0.19,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:the_end"],
+        "biomes": ["#minecraft:is_end"]
+      }
+    }
+  ]
+}

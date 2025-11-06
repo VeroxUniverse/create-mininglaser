@@ -1,0 +1,48 @@
+{
+  "type": "create_mininglaser:drill_core",
+  "conditions": [{ "type": "forge:mod_loaded", "modid": "immersiveengineering" }],
+  "tier": "create_mininglaser:t5",
+  "duration": 300,
+  "drops": [
+    {
+      "item": "immersiveengineering:raw_aluminum",
+      "chance": 0.25,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "immersiveengineering:raw_nickel",
+      "chance": 0.23,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "immersiveengineering:raw_silver",
+      "chance": 0.25,
+      "min": 2,
+      "max": 3,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    },
+    {
+      "item": "immersiveengineering:raw_lead",
+      "chance": 0.25,
+      "min": 2,
+      "max": 4,
+      "env": {
+        "dimensions": ["minecraft:overworld"],
+        "biomes": ["#minecraft:is_overworld"]
+      }
+    }
+  ]
+}
