@@ -4,6 +4,7 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.registration.*;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +22,8 @@ import java.util.List;
 @JeiPlugin
 public class JeiPluginMod implements IModPlugin {
     private static final ResourceLocation UID = new ResourceLocation("create_mininglaser", "jei_plugin");
+
+    private static IJeiRuntime RUNTIME;
 
     @Override public ResourceLocation getPluginUid() { return UID; }
 
@@ -48,17 +51,36 @@ public class JeiPluginMod implements IModPlugin {
 
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registry) {
-        var mc = Minecraft.getInstance();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) return;
+        registry.addRecipes(DrillCoreJei.TYPE, collectRecipes(mc.level.getRecipeManager()));
+    }
+
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime runtime) {
+        RUNTIME = runtime;
+    }
+
+    public static void reloadJeiRecipes() {
+        if (RUNTIME == null) return;
+        Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
 
-        RecipeManager manager = mc.level.getRecipeManager();
-        Collection<Recipe<?>> all = manager.getRecipes();
+        var rm = mc.level.getRecipeManager();
+        var list = collectRecipes(rm);
 
-        List<DrillCoreRecipe> recipes = all.stream()
+        var mgr = RUNTIME.getRecipeManager();
+        mgr.hideRecipeCategory(DrillCoreJei.TYPE);
+        mgr.unhideRecipeCategory(DrillCoreJei.TYPE);
+
+        mgr.unhideRecipes(DrillCoreJei.TYPE, list);
+    }
+
+    private static List<DrillCoreRecipe> collectRecipes(RecipeManager manager) {
+        Collection<Recipe<?>> all = manager.getRecipes();
+        return all.stream()
                 .filter(r -> r.getType() == ModRecipes.DRILL_CORE_TYPE.get())
                 .map(r -> (DrillCoreRecipe) r)
                 .toList();
-
-        registry.addRecipes(DrillCoreJei.TYPE, recipes);
     }
 }

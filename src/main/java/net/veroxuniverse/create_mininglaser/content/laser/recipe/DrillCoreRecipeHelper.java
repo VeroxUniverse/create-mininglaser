@@ -29,7 +29,6 @@ public class DrillCoreRecipeHelper {
         if (list.isEmpty()) return null;
 
         int duration = list.get(0).getDurationTicks();
-
         List<DrillCoreRecipe.Drop> mergedDrops = new ArrayList<>();
         for (DrillCoreRecipe rec : list) {
             mergedDrops.addAll(rec.getDrops());

@@ -3,8 +3,6 @@ package net.veroxuniverse.create_mininglaser.content.items;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
-
-
 import java.util.*;
 
 public class TierDefs {
@@ -23,8 +21,30 @@ public class TierDefs {
         for (TierDef def : defs) register(def);
     }
 
-    public static TierDef get(ResourceLocation id) { return BY_ID.get(id); }
-    public static TierDef byCoreItem(Item item)    { return BY_CORE_ITEM.get(item); }
+    public static Collection<TierDef> getAll() {
+        return Collections.unmodifiableCollection(BY_ID.values());
+    }
 
-    public static Collection<TierDef> all() { return Collections.unmodifiableCollection(BY_ID.values()); }
+    public static void setAll(Collection<TierDef> defs) {
+        BY_ID.clear();
+        BY_CORE_ITEM.clear();
+        for (TierDef def : defs) register(def);
+    }
+
+    public static TierDef get(ResourceLocation id) {
+        return BY_ID.get(id);
+    }
+
+    public static TierDef byCoreItem(Item item) {
+        return BY_CORE_ITEM.get(item);
+    }
+
+    public static Collection<TierDef> all() {
+        return Collections.unmodifiableCollection(BY_ID.values());
+    }
+
+    public static void clear() {
+        BY_ID.clear();
+        BY_CORE_ITEM.clear();
+    }
 }

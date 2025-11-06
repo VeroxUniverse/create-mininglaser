@@ -54,6 +54,23 @@ public class DrillCoreRecipe implements Recipe<Container> {
     public ResourceLocation getTierId() { return tierId; }
     @Nullable
     public TierDef getTierDef() { return TierDefs.get(tierId); }
+    @Nullable
+    public ResourceLocation getCoreItemId() {
+        TierDef d = getTierDef();
+        return d != null ? d.coreItem : null;
+    }
+    public float getMinRpmForJei() {
+        TierDef d = getTierDef();
+        return d != null ? d.minRpm : 128f;
+    }
+    public double getStressAtMinForJei() {
+        TierDef d = getTierDef();
+        return d != null ? d.stress_at_minRPM : 0d;
+    }
+    public double getStressAtMaxForJei() {
+        TierDef d = getTierDef();
+        return d != null ? Math.max(d.stress_at_minRPM, 0d) * 2d : 0d;
+    }
 
     public int getDurationTicks() { return durationTicks; }
     public List<Drop> getDrops() { return drops; }

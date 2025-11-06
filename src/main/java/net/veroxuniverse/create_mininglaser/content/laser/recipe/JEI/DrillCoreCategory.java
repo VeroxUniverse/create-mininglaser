@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.veroxuniverse.create_mininglaser.content.items.TierDef;
 import net.veroxuniverse.create_mininglaser.content.laser.recipe.DrillCoreRecipe;
 import net.veroxuniverse.create_mininglaser.registry.ModConfigs;
 
@@ -125,27 +124,33 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder b, DrillCoreRecipe r, IFocusGroup focuses) {
-        final TierDef def = r.getTierDef();
-        if (def == null) return;
+        ItemStack coreStack;
 
-        Item coreItemObj = ForgeRegistries.ITEMS.getValue(def.coreItem);
-        ItemStack coreStack = coreItemObj != null ? new ItemStack(coreItemObj) : ItemStack.EMPTY;
+        if (r.getCoreItemId() != null) {
+            Item coreItem = ForgeRegistries.ITEMS.getValue(r.getCoreItemId());
+            if (coreItem != null) {
+                coreStack = new ItemStack(coreItem);
+            } else {
+                coreStack = new ItemStack(net.minecraft.world.item.Items.BARRIER);
+                coreStack.setHoverName(Component.literal(r.getCoreItemId().toString()));
+            }
+        } else {
+            coreStack = new ItemStack(net.minecraft.world.item.Items.BARRIER);
+            coreStack.setHoverName(Component.literal("missing core_item"));
+        }
 
         b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, 31, 21)
                 .addItemStack(coreStack)
                 .addTooltipCallback((view, tooltip) -> {
-                    double suAtMin = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
-                    tooltip.add(Component.literal("Stress @" + def.minRpm + " RPM: " + formatSU(suAtMin) + " SU")
-                            .withStyle(ChatFormatting.WHITE));
-                    tooltip.add(Component.literal("Min Speed: " + def.minRpm + " RPM")
-                            .withStyle(ChatFormatting.GRAY));
+                    double suAtMin = r.getStressAtMinForJei() * ModConfigs.COMMON.suScale.get();
+                    tooltip.add(Component.literal("Stress @" + (int) r.getMinRpmForJei() + " RPM: " + formatSU(suAtMin) + " SU"));
+                    tooltip.add(Component.literal("Min Speed: " + (int) r.getMinRpmForJei() + " RPM").withStyle(ChatFormatting.GRAY));
                 });
 
         var drops = r.getDrops();
         for (int i = 0; i < drops.size(); i++) {
             int col = i % COLS;
             int row = i / COLS;
-
             int x = START_X + col * SLOT;
             int y = START_Y + row * SLOT;
 
@@ -157,13 +162,9 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
             b.addSlot(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT, x, y)
                     .addItemStack(outStack)
                     .addTooltipCallback((view, tooltip) -> {
-                        tooltip.add(Component.literal("Chance: " + formatChance(drop.chance()))
-                                .withStyle(ChatFormatting.WHITE));
-                        if (drop.min() != drop.max()) {
-                            tooltip.add(Component.literal("Amount: " + drop.min() + "–" + drop.max())
-                                    .withStyle(ChatFormatting.WHITE));
-                        }
-
+                        tooltip.add(Component.literal("Chance: " + formatChance(drop.chance())));
+                        if (drop.min() != drop.max())
+                            tooltip.add(Component.literal("Amount: " + drop.min() + "–" + drop.max()));
                         var f = drop.filter();
                         if (f != null && !f.isEmpty()) {
                             if (!f.dimensions().isEmpty()) {
@@ -190,13 +191,10 @@ public class DrillCoreCategory implements IRecipeCategory<DrillCoreRecipe> {
     public void draw(DrillCoreRecipe r, IRecipeSlotsView v, GuiGraphics g, double mx, double my) {
         var font = Minecraft.getInstance().font;
 
-        final TierDef def = r.getTierDef();
-        if (def == null) return;
-
-        double suAtMin = def.stress_at_minRPM * ModConfigs.COMMON.suScale.get();
+        double suAtMin = r.getStressAtMinForJei() * ModConfigs.COMMON.suScale.get();
         String timeText = String.format(Locale.US, "%.1f s", r.getDurationTicks() / 20.0);
         String suText   = formatSU(suAtMin) + " SU";
-        String rpmText  = "≥" + def.minRpm + " RPM";
+        String rpmText  = "≥" + (int) r.getMinRpmForJei() + " RPM";
 
         g.drawString(font, timeText, 8, 6, 0xFFFFFF, false);
         g.drawString(font, suText,   80, 6, 0xFFFFFF, false);

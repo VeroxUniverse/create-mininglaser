@@ -86,4 +86,9 @@ public final class TierRegistry extends SimpleJsonResourceReloadListener {
     }
 
     public static Collection<TierDef> all() { return BY_ID.values(); }
+
+    public Collection<TierDef> getAll() {
+        return BY_ID.values();
+    }
+
 }
