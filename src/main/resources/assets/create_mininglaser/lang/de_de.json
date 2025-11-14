@@ -1,0 +1,67 @@
+{
+  "death.attack.laser.1": "%1$s wurde von einem Laser vaporisiert",
+  "death.attack.laser.2": "%1$s wurde durch einen Laser zu Asche verwandelt",
+  "death.attack.laser.3": "%1$s verschwand im grellen Licht des Lasers",
+  "death.attack.laser.4": "%1$s wurde präzise vom Laser geteilt",
+
+  "death.attack.laser.player.1": "%1$s wurde im Kampf gegen %2$s vom Laser vaporisiert",
+  "death.attack.laser.player.2": "%1$s wurde im Kampf gegen %2$s durch einen Laser zu Asche verwandelt",
+  "death.attack.laser.player.3": "%1$s verschwand im Kampf gegen %2$s im grellen Licht des Lasers",
+  "death.attack.laser.player.4": "%1$s wurde im Kampf gegen %2$s präzise vom Laser geteilt",
+
+  "adv.create_mininglaser.root.title": "Create Mining Laser",
+  "adv.create_mininglaser.root.desc": "Nutze die Kraft gebündelten Lichts!",
+  "adv.create_mininglaser.laser_drill.title": "Laser Drill",
+  "adv.create_mininglaser.laser_drill.desc": "Baue oder erhalte den Laser Drill.",
+  "adv.create_mininglaser.core_t1.title": "Drill – Tier 1",
+  "adv.create_mininglaser.core_t1.desc": "Erhalte einen Drill Head der Stufe 1.",
+  "adv.create_mininglaser.core_t2.title": "Drill – Tier 2",
+  "adv.create_mininglaser.core_t2.desc": "Erhalte einen Drill Head der Stufe 2.",
+  "adv.create_mininglaser.core_t3.title": "Drill – Tier 3",
+  "adv.create_mininglaser.core_t3.desc": "Erhalte einen Drill Head der Stufe 3.",
+  "adv.create_mininglaser.core_t4.title": "Drill – Tier 4",
+  "adv.create_mininglaser.core_t4.desc": "Erhalte einen Drill Head der Stufe 4.",
+  "adv.create_mininglaser.core_t5.title": "Drill – Tier 5",
+  "adv.create_mininglaser.core_t5.desc": "Erhalte einen Drill Head der Stufe 5.",
+  "adv.create_mininglaser.laser_touch.title": "Autsch!",
+  "adv.create_mininglaser.laser_touch.desc": "Berühre den Strahl des Mining Lasers.",
+
+  "config.jade.plugin_create_mininglaser.laser_drill_core": "Laser Drill: Drill Head",
+  "config.jade.plugin_create_mininglaser.laser_drill_core.desc": "Zeigt Drill Head und Tier im Overlay an.",
+
+  "itemGroup.create_mininglaser": "Create Mining Laser",
+
+  "item.create_mininglaser.drill_core_t1": "Laser Drill Head T1",
+  "item.create_mininglaser.drill_core_t2": "Laser Drill Head T2",
+  "item.create_mininglaser.drill_core_t3": "Laser Drill Head T3",
+  "item.create_mininglaser.drill_core_t4": "Laser Drill Head T4",
+  "item.create_mininglaser.drill_core_t5": "Laser Drill Head T5",
+
+  "item.create_mininglaser.crystal_t2": "Fluxite Crystal",
+  "item.create_mininglaser.crystal_t3": "Synthite Crystal",
+  "item.create_mininglaser.crystal_t4": "Neurophase Crystal",
+  "item.create_mininglaser.crystal_t5": "Ionix Crystal",
+  "item.create_mininglaser.crystal_t6": "Quantium Crystal",
+
+  "item.create_mininglaser.laser_mechanism": "Laser Mechanism",
+  "item.create_mininglaser.incomplete_laser_mechanism": "Unfertiges Laser Mechanism",
+  "item.create_mininglaser.incomplete_core_frame": "Unfertiger Drill Head Frame",
+
+  "block.create_mininglaser.laser_drill": "Laser Drill",
+  "block.create_mininglaser.drill_casing": "Drill Casing",
+  "block.create_mininglaser.drill_hatch": "Drill Hatch",
+
+  "create_mininglaser.ponder.laser_multiblock.header": "Den Laser Drill Multiblock bauen",
+  "create_mininglaser.ponder.laser_multiblock.text_1": "Platziere die erste Schicht Drill Casings.",
+  "create_mininglaser.ponder.laser_multiblock.text_2": "Platziere den Laser Drill Block hier.",
+  "create_mininglaser.ponder.laser_multiblock.text_3": "Platziere das Hatch an der Seite für den Item-Output.",
+  "create_mininglaser.ponder.laser_multiblock.text_4": "Benutze einen Wrench auf dem Laser Drill Block, um den Multiblock zu formen.",
+
+  "create_mininglaser.ponder.insert_core.header": "Drill Heads einsetzen und entfernen",
+  "create_mininglaser.ponder.insert_core.text_1": "Rechtsklicke den CLaser Drill Block mit einem Drill Head, um ihn einzusetzen.",
+  "create_mininglaser.ponder.insert_core.text_2": "Rechtsklicke mit einem Wrench, um den Drill Head zu entfernen.",
+
+  "create_mininglaser.ponder.output_setup.header": "Das Output Hatch verbinden",
+  "create_mininglaser.ponder.output_setup.text_1": "Items werden über das Hatch ausgegeben.",
+  "create_mininglaser.ponder.output_setup.text_2": "Verbinde hier einen Funnel, um Items einzusammeln."
+}
